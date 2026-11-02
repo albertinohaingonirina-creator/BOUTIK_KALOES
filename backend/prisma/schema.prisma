@@ -1,0 +1,284 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  CAISSIER
+  MAGASINIER
+}
+
+enum StoreType {
+  DEPOT
+  BOUTIQUE
+  REVENDEUR
+}
+
+enum OrderStatus {
+  EN_ATTENTE
+  PAYEE
+  REMBOURSEE
+  ANNULEE
+}
+
+enum PaymentMethod {
+  ESPECES
+  MVOLA
+  CARTE_BANCAIRE
+  CHEQUE
+  VIREMENT
+  MIXTE
+}
+
+enum MovementType {
+  ENTREE_PRODUCTION
+  TRANSFERT_ENVOI
+  TRANSFERT_RECEPTION
+  VENTE
+  GIFTING
+  AJUSTEMENT_INVENTAIRE
+}
+
+enum TransferStatus {
+  BROUILLON
+  EXPEDIE
+  EN_TRANSIT
+  RECEPTIONNE
+  ANNULE
+}
+
+enum AuditFrequency {
+  JOURNALIER
+  HEBDOMADAIRE
+  MENSUEL
+  TRIMESTRIEL
+}
+
+model User {
+  id           String          @id @default(uuid())
+  nom          String
+  email        String          @unique
+  motDePasse   String
+  codePin      String?
+  role         Role            @default(CAISSIER)
+  actif        Boolean         @default(true)
+  magasinId    String?
+  magasin      Store?          @relation(fields: [magasinId], references: [id])
+  commandes    Order[]
+  mouvements   StockMovement[]
+  transferts   StockTransfer[] @relation("TransfertInitiateur")
+  audits       InventoryAudit[]
+  creeLe       DateTime        @default(now())
+  misAJourLe   DateTime        @updatedAt
+}
+
+model Store {
+  id                  String             @id @default(uuid())
+  nom                 String
+  type                StoreType          @default(BOUTIQUE)
+  adresse             String?
+  telephone           String?
+  utilisateurs        User[]
+  emplacements        Emplacement[]
+  stocks              Stock[]
+  commandes           Order[]
+  transfertsSource    StockTransfer[]    @relation("MagasinSource")
+  transfertsDest      StockTransfer[]    @relation("MagasinDestination")
+  mouvementsSource    StockMovement[]    @relation("MvtSource")
+  mouvementsDest      StockMovement[]    @relation("MvtDest")
+  audits              InventoryAudit[]
+  creeLe              DateTime           @default(now())
+}
+
+model Emplacement {
+  id         String   @id @default(uuid())
+  code       String
+  zone       String?
+  magasinId  String
+  magasin    Store    @relation(fields: [magasinId], references: [id])
+  stocks     Stock[]
+  creeLe     DateTime @default(now())
+
+  @@unique([magasinId, code])
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  nom      String    @unique
+  produits Product[]
+}
+
+model Product {
+  id          String           @id @default(uuid())
+  nom         String
+  description String?
+  categorieId String
+  categorie   Category         @relation(fields: [categorieId], references: [id])
+  variantes   ProductVariant[]
+  creeLe      DateTime         @default(now())
+}
+
+model ProductVariant {
+  id                 String              @id @default(uuid())
+  produitId          String
+  produit            Product             @relation(fields: [produitId], references: [id], onDelete: Cascade)
+  ugs                String              @unique
+  codeBarre          String?             @unique
+  taille             String?
+  couleur            String?
+  prixVente          Float
+  coutAchat          Float               @default(0)
+  seuilAlerte        Int                 @default(5)
+  stocks             Stock[]
+  elementsCommande   OrderItem[]
+  elementsTransfert  StockTransferItem[]
+  mouvements         StockMovement[]
+  elementsAudit      InventoryAuditItem[]
+  creeLe             DateTime            @default(now())
+}
+
+model Stock {
+  id            String         @id @default(uuid())
+  magasinId     String
+  magasin       Store          @relation(fields: [magasinId], references: [id])
+  varianteId    String
+  variante      ProductVariant @relation(fields: [varianteId], references: [id])
+  emplacementId String?
+  emplacement   Emplacement?   @relation(fields: [emplacementId], references: [id])
+  quantite      Int            @default(0)
+
+  @@unique([magasinId, varianteId])
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  nom       String
+  telephone String?
+  email     String?
+  adresse   String?
+  ville     String?
+  remarque  String?
+  commandes Order[]
+  creeLe    DateTime @default(now())
+}
+
+model Discount {
+  id          String   @id @default(uuid())
+  nom         String   @unique
+  pourcentage Float
+  isGifting   Boolean  @default(false)
+  actif       Boolean  @default(true)
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  numeroTicket    String      @unique
+  magasinId       String
+  magasin         Store       @relation(fields: [magasinId], references: [id])
+  utilisateurId   String
+  utilisateur     User        @relation(fields: [utilisateurId], references: [id])
+  customerId      String?
+  client          Customer?   @relation(fields: [customerId], references: [id])
+  sousTotal       Float
+  remiseTotale    Float       @default(0)
+  totalNet        Float
+  statut          OrderStatus @default(PAYEE)
+  elements        OrderItem[]
+  paiements       Payment[]
+  creeLe          DateTime    @default(now())
+}
+
+model OrderItem {
+  id           String         @id @default(uuid())
+  orderId      String
+  commande     Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  varianteId   String
+  variante     ProductVariant @relation(fields: [varianteId], references: [id])
+  quantite     Int
+  prixUnitaire Float
+  remise       Float          @default(0)
+  sousTotal    Float
+}
+
+model Payment {
+  id        String        @id @default(uuid())
+  orderId   String
+  commande  Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  methode   PaymentMethod
+  montant   Float
+  reference String?
+  creeLe    DateTime      @default(now())
+}
+
+model StockTransfer {
+  id           String              @id @default(uuid())
+  reference    String              @unique
+  sourceId     String
+  source       Store               @relation("MagasinSource", fields: [sourceId], references: [id])
+  destId       String
+  destination  Store               @relation("MagasinDestination", fields: [destId], references: [id])
+  expediteurId String
+  expediteur   User                @relation("TransfertInitiateur", fields: [expediteurId], references: [id])
+  statut       TransferStatus      @default(BROUILLON)
+  elements     StockTransferItem[]
+  dateEnvoi    DateTime?
+  dateRecep    DateTime?
+  creeLe       DateTime            @default(now())
+}
+
+model StockTransferItem {
+  id          String         @id @default(uuid())
+  transfertId String
+  transfert   StockTransfer  @relation(fields: [transfertId], references: [id], onDelete: Cascade)
+  varianteId  String
+  variante    ProductVariant @relation(fields: [varianteId], references: [id])
+  quantite    Int
+}
+
+model StockMovement {
+  id         String          @id @default(uuid())
+  date       DateTime        @default(now())
+  type       MovementType
+  varianteId String
+  variante   ProductVariant  @relation(fields: [varianteId], references: [id])
+  quantite   Int
+  sourceId   String?
+  source     Store?          @relation("MvtSource", fields: [sourceId], references: [id])
+  destId     String?
+  dest       Store?          @relation("MvtDest", fields: [destId], references: [id])
+  refPiece   String?
+  userId     String
+  operateur  User            @relation(fields: [userId], references: [id])
+}
+
+model InventoryAudit {
+  id          String               @id @default(uuid())
+  reference   String               @unique
+  magasinId   String
+  magasin     Store                @relation(fields: [magasinId], references: [id])
+  auditeurId  String
+  auditeur    User                 @relation(fields: [auditeurId], references: [id])
+  frequence   AuditFrequency
+  cloture     Boolean              @default(false)
+  lignes      InventoryAuditItem[]
+  dateDebut   DateTime             @default(now())
+  dateCloture DateTime?
+}
+
+model InventoryAuditItem {
+  id             String         @id @default(uuid())
+  auditId        String
+  audit          InventoryAudit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  varianteId     String
+  variante       ProductVariant @relation(fields: [varianteId], references: [id])
+  stockTheorique Int
+  stockReel      Int
+  ecart          Int
+  valeurEcartMGA Float
+}

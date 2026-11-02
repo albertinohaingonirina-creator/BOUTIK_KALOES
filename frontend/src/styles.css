@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --kaloes-dark: #3e2723;
+  --kaloes-brown: #5d4037;
+  --kaloes-accent: #8d6e63;
+  --kaloes-cream: #f9f6f0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--kaloes-cream);
+  color: #2c221e;
+}
+
+h1, h2, h3, h4, .navbar-brand {
+  font-family: 'Playfair Display', serif;
+}
+
+.bg-kaloes-dark {
+  background-color: #3e2723 !important;
+}
+
+.bg-kaloes-brown {
+  background-color: #5d4037 !important;
+}
+
+.text-kaloes-dark {
+  color: #3e2723 !important;
+}
+
+.text-kaloes-brown {
+  color: #5d4037 !important;
+}
+
+.btn-kaloes {
+  background-color: #3e2723;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-kaloes:hover {
+  background-color: #5d4037;
+  color: #ffffff;
+}
+
+.card-kaloes {
+  border: 1px solid rgba(93, 64, 55, 0.12);
+  background-color: #ffffff;
+  border-radius: 12px;
+}

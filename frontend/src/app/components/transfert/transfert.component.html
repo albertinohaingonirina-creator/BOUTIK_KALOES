@@ -1,0 +1,71 @@
+<div class="container py-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="h3 fw-bold text-kaloes-dark">Mouvements & Gestion des Stocks</h1>
+      <p class="text-muted">Enregistrer un transfert, une entrée ou un gifting</p>
+    </div>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success" role="alert">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <div class="card shadow-sm border-0 card-kaloes">
+    <div class="card-body p-4">
+      <form (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="typeMvt" class="form-label fw-bold text-kaloes-dark">Type de Mouvement</label>
+          <select id="typeMvt" class="form-select" [(ngModel)]="typeMvt" name="typeMvt" required>
+            <option value="TRANSFERT">TRANSFERT</option>
+            <option value="ENTREE">ENTREE</option>
+            <option value="GIFTING">GIFTING</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="article" class="form-label fw-bold text-kaloes-dark">Article / Mobilier</label>
+          <select id="article" class="form-select" [(ngModel)]="selectedArticle" name="selectedArticle" required>
+            <option value="" disabled selected>Sélectionner un article</option>
+            <option *ngFor="let art of articles" [value]="art.id || art.nom || art.reference || art">
+              {{ art.nom || art.reference || art }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="quantite" class="form-label fw-bold text-kaloes-dark">Quantité</label>
+          <input type="number" id="quantite" class="form-control" [(ngModel)]="quantite" name="quantite" min="1" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="magasinSource" class="form-label fw-bold text-kaloes-dark">Boutique / Dépôt Source</label>
+          <select id="magasinSource" class="form-select" [(ngModel)]="magasinSource" name="magasinSource" required>
+            <option value="" disabled selected>Sélectionner la source</option>
+            <option *ngFor="let mag of magasins" [value]="mag.id || mag.nom || mag">
+              {{ mag.nom || mag }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="magasinDestination" class="form-label fw-bold text-kaloes-dark">Boutique / Dépôt Destination</label>
+          <select id="magasinDestination" class="form-select" [(ngModel)]="magasinDestination" name="magasinDestination">
+            <option value="">Sélectionner la destination (optionnel)</option>
+            <option *ngFor="let mag of magasins" [value]="mag.id || mag.nom || mag">
+              {{ mag.nom || mag }}
+            </option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-100 btn btn-kaloes py-2 fw-bold" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Valider le Mouvement
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

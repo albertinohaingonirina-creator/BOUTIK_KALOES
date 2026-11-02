@@ -1,0 +1,6 @@
+{
+  "name": "Kaloes Gestion de Boutique",
+  "description": "Système de gestion de boutique, stocks et facturation Kaloes",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

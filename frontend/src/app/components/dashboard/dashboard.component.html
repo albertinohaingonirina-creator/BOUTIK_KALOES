@@ -1,0 +1,52 @@
+<div class="container-fluid px-2 px-md-4">
+  <div class="mb-4">
+    <h3 class="fw-bold mb-1" style="color: #3E2723; font-family: serif; letter-spacing: -0.5px;">Tableau de Bord Exécutif</h3>
+    <p class="text-muted small mb-0">Indicateurs clés d'activité consolidés depuis la base PostgreSQL</p>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-success h-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small text-uppercase fw-bold">Chiffre d'Affaires</span>
+          <i class="bi bi-cash-coin fs-3 text-success"></i>
+        </div>
+        <h3 class="fw-bold mb-0" style="color: #3E2723;">{{ kpis.chiffreAffairesMGA | number }} Ar</h3>
+        <span class="text-muted small">Ventes nettes cumulées</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-primary h-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small text-uppercase fw-bold">Variantes Articles</span>
+          <i class="bi bi-box-seam fs-3 text-primary"></i>
+        </div>
+        <h3 class="fw-bold mb-0 text-dark">{{ kpis.totalArticles }}</h3>
+        <span class="text-muted small">Références en catalogue</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-warning h-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small text-uppercase fw-bold">Clients Répertoire</span>
+          <i class="bi bi-people fs-3 text-warning"></i>
+        </div>
+        <h3 class="fw-bold mb-0 text-dark">{{ kpis.totalClients }}</h3>
+        <span class="text-muted small">Fichier client actif</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-secondary h-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small text-uppercase fw-bold">Réseau Logistique</span>
+          <i class="bi bi-shop fs-3 text-secondary"></i>
+        </div>
+        <h3 class="fw-bold mb-0 text-dark">{{ kpis.totalMagasins }}</h3>
+        <span class="text-muted small">Boutiques & Dépôts</span>
+      </div>
+    </div>
+  </div>
+</div>

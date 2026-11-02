@@ -1,0 +1,117 @@
+<div class="container-fluid p-0 min-vh-100 d-flex overflow-hidden">
+  <div class="row g-0 w-100 min-vh-100">
+    
+    <div class="col-12 col-lg-6 d-flex flex-column justify-content-between p-4 p-xl-5 min-vh-100" style="background-color: #FAF7F2; overflow-y: auto;">
+      
+      <div class="d-none d-lg-block"></div>
+
+      <div class="mx-auto my-auto w-100 py-3" style="max-width: 440px;">
+        <div class="text-center mb-4">
+          <img src="assets/logoKaloes.png" alt="KALOES Madagascar" class="img-fluid d-block mx-auto mb-3" style="max-height: 250px; width: auto; object-fit: contain;">
+          <h2 class="fw-bold mb-1" style="color: #2B1A12; font-family: serif; font-size: 1.9rem;">Connexion</h2>
+          
+        </div>
+       
+        <div *ngIf="errorMessage" class="alert alert-danger border-0 rounded-3 py-2 px-3 small fw-semibold d-flex align-items-center gap-2 shadow-sm mb-3">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <form (ngSubmit)="submitEmail()">
+          <div class="mb-3">
+            <label class="form-label small fw-bold" style="color: #2B1A12;">Adresse e-mail*</label>
+            <div class="input-group shadow-sm rounded-3 overflow-hidden" style="border: 1px solid #D7CCC8;">
+              <span class="input-group-text border-0 text-muted px-3" style="background-color: #D7CCC8;"><i class="bi bi-envelope"></i></span>
+              <input type="email" class="form-control border-0 py-2 fs-6 shadow-none" style="background-color: #F5EFEB;" placeholder="direction@kaloes.com" [(ngModel)]="email" name="email" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label small fw-bold mb-0" style="color: #2B1A12;">Mot de passe*</label>
+              <a href="#" class="small text-decoration-none fw-semibold" style="color: #5D4037;" (click)="$event.preventDefault()">Mot de passe oublié ?</a>
+            </div>
+            <div class="input-group shadow-sm rounded-3 overflow-hidden" style="border: 1px solid #D7CCC8;">
+              <span class="input-group-text border-0 text-muted px-3" style="background-color: #D7CCC8;"><i class="bi bi-lock"></i></span>
+              <input [type]="showPassword ? 'text' : 'password'" class="form-control border-0 py-2 fs-6 shadow-none" style="background-color: #F5EFEB;" placeholder="••••••••" [(ngModel)]="motDePasse" name="motDePasse" required autocomplete="current-password">
+              <button type="button" class="input-group-text border-0 text-muted px-3" style="background-color: #F5EFEB;" (click)="togglePassword()">
+                <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn w-100 rounded-3 py-2 fw-bold text-white shadow-sm d-flex justify-content-center align-items-center gap-2 mt-4" style="background-color: #6D4C41; border: none; font-size: 1rem; transition: background-color 0.2s;" [disabled]="isLoading" onmouseover="this.style.backgroundColor='#4E342E'" onmouseout="this.style.backgroundColor='#6D4C41'">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+            {{ isLoading ? 'Connexion en cours...' : 'Se connecter' }}
+          </button>
+        </form>
+      </div>
+
+      <div class="text-center pt-3 pb-2 text-muted" style="font-size: 0.75rem;">
+        © Plateforme Certifiée Kaloès Madagascar • Tous droits réservés.
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6 d-none d-lg-flex flex-column justify-content-between p-4 p-xl-5 min-vh-100 position-relative overflow-hidden" style="background-color: #1F140E; color: #FAF7F2; background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px); background-size: 24px 24px;">
+      
+      <div class="d-flex justify-content-start z-1">
+        <span class="badge rounded-pill px-3 py-2 text-uppercase fw-semibold" style="background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); letter-spacing: 1.5px; font-size: 0.7rem; color: #E0D6CE;">
+          PORTAIL DE GESTION BOUTIQUE & LOGISTIQUE
+        </span>
+      </div>
+
+      <div class="my-auto z-1 px-xl-3" style="max-width: 580px;">
+        <h1 class="display-6 fw-bold mb-3" style="font-family: serif; line-height: 1.25; color: #FFFFFF;">
+          L'artisanat d'exception,<br>géré avec précision et fluidité.
+        </h1>
+        <p class="fs-6 mb-4 fw-light" style="color: #D7CCC8; line-height: 1.6;">
+          Plateforme numérique d'autogestion des stocks d'ateliers, transferts inter-dépôts , suivi des ventes caisse et réconciliations d'inventaires.
+        </p>
+
+        <div class="row g-3">
+          <div class="col-4">
+            <div class="p-3 rounded-3 h-100 shadow-sm" style="background-color: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px);">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #66BB6A;"></span>
+                <span class="fw-bold small text-white">Traçabilité</span>
+              </div>
+              <span class="d-block" style="font-size: 0.75rem; color: #C7B9B0;">Dépôt ➔ Showroom</span>
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="p-3 rounded-3 h-100 shadow-sm" style="background-color: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px);">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #FFA726;"></span>
+                <span class="fw-bold small text-white">Caisse POS</span>
+              </div>
+              <span class="d-block" style="font-size: 0.75rem; color: #C7B9B0;">Ventes & Gifting Ar</span>
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="p-3 rounded-3 h-100 shadow-sm" style="background-color: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px);">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #42A5F5;"></span>
+                <span class="fw-bold small text-white">Sécurité</span>
+              </div>
+              <span class="d-block" style="font-size: 0.75rem; color: #C7B9B0;">Chiffrement</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center small z-1 pt-3" style="font-size: 0.8rem;">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-shield-lock-fill text-white-50"></i>
+          <span style="color: #D7CCC8;">Plateforme Certifiée Kaloès Madagascar</span>
+        </div>
+      </div>
+
+      <div class="position-absolute end-0 bottom-0 pointer-events-none" style="opacity: 0.05; transform: translate(-15%, 15%); z-index: 0;">
+        <img src="assets/logoKaloes.png" alt="" style="width: 500px; height: auto; filter: brightness(0) invert(1);">
+      </div>
+
+    </div>
+  </div>
+</div>

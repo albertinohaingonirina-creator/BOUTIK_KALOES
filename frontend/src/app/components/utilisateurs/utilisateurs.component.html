@@ -1,0 +1,114 @@
+<div class="container-fluid px-2 px-md-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h3 class="fw-bold mb-1" style="color: #3E2723; font-family: serif; letter-spacing: -0.5px;">Gestion des Utilisateurs</h3>
+      <p class="text-muted small mb-0">Paramétrage des accès, création des caissiers, managers et magasiniers.</p>
+    </div>
+    <button class="btn btn-dark rounded-pill px-4 py-2 small fw-semibold shadow-sm d-flex align-items-center gap-2" style="background-color: #3E2723; border-color: #3E2723;" (click)="openCreateModal()">
+      <i class="bi bi-person-plus-fill"></i>
+      <span>Nouvel Utilisateur</span>
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead style="background-color: #F8F5F2;">
+          <tr class="text-muted small text-uppercase" style="letter-spacing: 0.5px;">
+            <th class="ps-4 py-3">Nom Complet</th>
+            <th class="py-3">E-mail</th>
+            <th class="py-3">Rôle système</th>
+            <th class="py-3">Magasin Assigné</th>
+            <th class="py-3">Statut</th>
+            <th class="pe-4 py-3 text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of users" class="border-bottom">
+            <td class="ps-4 py-3 fw-bold text-dark">{{ u.nom }}</td>
+            <td class="text-muted">{{ u.email }}</td>
+            <td>
+              <span class="badge rounded-pill px-3 py-1" 
+                [ngClass]="{
+                  'bg-danger': u.role === 'ADMIN',
+                  'bg-primary': u.role === 'MANAGER',
+                  'bg-success': u.role === 'CAISSIER',
+                  'bg-info text-dark': u.role === 'MAGASINIER'
+                }">
+                {{ u.role }}
+              </span>
+            </td>
+            <td><span class="text-secondary small fw-semibold"><i class="bi bi-geo-alt me-1"></i>{{ getStoreName(u.magasinId) }}</span></td>
+            <td>
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1" *ngIf="u.actif">Actif</span>
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1" *ngIf="!u.actif">Inactif</span>
+            </td>
+            <td class="pe-4 text-end">
+              <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-none border" (click)="openEditModal(u)">
+                <i class="bi bi-pencil-square me-1"></i> Modifier
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="users.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              {{ isLoading ? 'Chargement...' : 'Aucun utilisateur trouvé.' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="isModalOpen" (click)="closeModal()" style="background-color: rgba(62, 39, 35, 0.45); backdrop-filter: blur(4px); z-index: 1040;"></div>
+<div class="modal d-block fade show" *ngIf="isModalOpen" tabindex="-1" style="z-index: 1050;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+      <div class="modal-header text-white px-4 py-3" style="background-color: #3E2723;">
+        <h5 class="modal-title fw-bold" style="font-family: serif;">{{ isEditing ? 'Modifier Utilisateur' : 'Créer un Utilisateur' }}</h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" (click)="closeModal()"></button>
+      </div>
+      <form (ngSubmit)="saveUser()">
+        <div class="modal-body p-4 bg-white">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-muted">Nom Complet</label>
+            <input type="text" class="form-control rounded-3 py-2" [(ngModel)]="userForm.nom" name="nom" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-muted">Adresse E-mail</label>
+            <input type="email" class="form-control rounded-3 py-2" [(ngModel)]="userForm.email" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-muted">Mot de passe {{ isEditing ? '(Laisser vide pour conserver)' : '' }}</label>
+            <input type="password" class="form-control rounded-3 py-2" [(ngModel)]="userForm.motDePasse" name="motDePasse" [required]="!isEditing">
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-semibold text-muted">Rôle</label>
+              <select class="form-select rounded-3 py-2" [(ngModel)]="userForm.role" name="role">
+                <option value="CAISSIER">Caissier</option>
+                <option value="MAGASINIER">Magasinier</option>
+                <option value="MANAGER">Manager</option>
+                <option value="ADMIN">Administrateur</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-semibold text-muted">Magasin Assigné</label>
+              <select class="form-select rounded-3 py-2" [(ngModel)]="userForm.magasinId" name="magasinId">
+                <option value="">Aucun (Global)</option>
+                <option *ngFor="let m of magasins" [value]="m.id || m.ID_MAGASIN">{{ m.nom || m.NOM }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light px-4 py-3 border-0 d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-dark rounded-pill px-4 fw-semibold" style="background-color: #3E2723; border-color: #3E2723;" [disabled]="isLoading">
+            {{ isEditing ? 'Mettre à jour' : 'Créer' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

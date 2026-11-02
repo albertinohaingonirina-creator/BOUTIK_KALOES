@@ -1,0 +1,144 @@
+<div class="container-fluid px-2 px-md-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h3 class="fw-bold mb-1" style="color: #3E2723; font-family: serif; letter-spacing: -0.5px;">Répertoire Clients</h3>
+      <p class="text-muted small mb-0">Gestion de la base clientèle showroom, historique des achats et synchronisation Loyverse</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <label class="btn btn-outline-dark rounded-pill px-3 py-2 small fw-semibold shadow-sm mb-0 cursor-pointer d-flex align-items-center gap-2">
+        <i class="bi bi-file-earmark-arrow-up"></i>
+        <span>Importer CSV Loyverse</span>
+        <input type="file" accept=".csv" (change)="handleCSV($event)" hidden>
+      </label>
+
+      <button class="btn btn-dark rounded-pill px-4 py-2 small fw-semibold shadow-sm d-flex align-items-center gap-2" style="background-color: #3E2723; border-color: #3E2723;" (click)="openCreateModal()">
+        <i class="bi bi-person-plus-fill"></i>
+        <span>Nouveau Client</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 mb-4 p-3 bg-white">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="input-group" style="max-width: 450px;">
+        <span class="input-group-text bg-light border-0 ps-3"><i class="bi bi-search text-muted"></i></span>
+        <input type="text" class="form-control bg-light border-0 py-2" placeholder="Rechercher par nom, téléphone, e-mail, remarque..." [(ngModel)]="searchTerm" (input)="applyFilter()">
+      </div>
+      <span class="badge rounded-pill bg-light text-dark border px-3 py-2 fw-semibold">
+        {{ filteredCustomers.length }} client(s) répertorié(s)
+      </span>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead style="background-color: #F8F5F2;">
+          <tr class="text-muted small text-uppercase" style="letter-spacing: 0.5px;">
+            <th class="ps-4 py-3">Client</th>
+            <th class="py-3">Téléphone</th>
+            <th class="py-3">E-mail</th>
+            <th class="py-3">Localisation</th>
+            <th class="py-3">Remarque / Profil</th>
+            <th class="pe-4 py-3 text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of filteredCustomers" class="border-bottom">
+            <td class="ps-4 py-3">
+              <span class="fw-bold text-dark d-block">{{ c.nom }}</span>
+              <span class="text-muted small" *ngIf="c._count?.commandes">{{ c._count.commandes }} commande(s)</span>
+            </td>
+            <td>
+              <span class="font-monospace small" *ngIf="c.telephone">{{ c.telephone }}</span>
+              <span class="text-muted small" *ngIf="!c.telephone">—</span>
+            </td>
+            <td>
+              <span class="small" *ngIf="c.email">{{ c.email }}</span>
+              <span class="text-muted small" *ngIf="!c.email">—</span>
+            </td>
+            <td>
+              <span class="small text-secondary" *ngIf="c.ville || c.adresse">
+                <i class="bi bi-geo-alt me-1"></i>{{ c.ville || c.adresse }}
+              </span>
+              <span class="text-muted small" *ngIf="!c.ville && !c.adresse">—</span>
+            </td>
+            <td>
+              <span class="badge rounded-pill px-3 py-1" style="background-color: #EFEBE9; color: #4E342E;" *ngIf="c.remarque">
+                {{ c.remarque }}
+              </span>
+              <span class="text-muted small" *ngIf="!c.remarque">—</span>
+            </td>
+            <td class="pe-4 text-end">
+              <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-2 border shadow-none" (click)="openEditModal(c)">
+                <i class="bi bi-pencil-square me-1"></i> Modifier
+              </button>
+              <button class="btn btn-sm btn-link text-danger p-0" (click)="deleteCustomer(c.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredCustomers.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              {{ isLoading ? 'Chargement des clients...' : 'Aucun client trouvé.' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="isModalOpen" (click)="closeModal()" style="background-color: rgba(62, 39, 35, 0.45); backdrop-filter: blur(4px); z-index: 1040;"></div>
+<div class="modal d-block fade show" *ngIf="isModalOpen" tabindex="-1" style="z-index: 1050;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+      <div class="modal-header text-white px-4 py-3" style="background-color: #3E2723;">
+        <h5 class="modal-title fw-bold" style="font-family: serif;">{{ isEditing ? 'Modifier la Fiche Client' : 'Nouveau Client' }}</h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" (click)="closeModal()"></button>
+      </div>
+
+      <form (ngSubmit)="saveCustomer()">
+        <div class="modal-body p-4 bg-white">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-muted">Nom Complet / Entreprise*</label>
+            <input type="text" class="form-control rounded-3 py-2" [(ngModel)]="customerForm.nom" name="nom" required placeholder="ex: Stephanie FB">
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-semibold text-muted">Téléphone</label>
+              <input type="text" class="form-control rounded-3 py-2" [(ngModel)]="customerForm.telephone" name="telephone" placeholder="ex: +261341112329">
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-semibold text-muted">Adresse E-mail</label>
+              <input type="email" class="form-control rounded-3 py-2" [(ngModel)]="customerForm.email" name="email" placeholder="client@domaine.com">
+            </div>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-semibold text-muted">Ville</label>
+              <input type="text" class="form-control rounded-3 py-2" [(ngModel)]="customerForm.ville" name="ville" placeholder="ex: Antananarivo">
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-semibold text-muted">Adresse</label>
+              <input type="text" class="form-control rounded-3 py-2" [(ngModel)]="customerForm.adresse" name="adresse" placeholder="ex: Ivandry">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-muted">Remarque (Profil, Remise accordée...)</label>
+            <input type="text" class="form-control rounded-3 py-2" [(ngModel)]="customerForm.remarque" name="remarque" placeholder="ex: Revendeur, Touriste, Dépôt vente 20%">
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light px-4 py-3 border-0 d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-dark rounded-pill px-4 fw-semibold" style="background-color: #3E2723; border-color: #3E2723;" [disabled]="isLoading">
+            {{ isEditing ? 'Sauvegarder' : 'Créer le client' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
