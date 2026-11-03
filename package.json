@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "concurrently -k \"ng build --watch --configuration development\" \"tsx watch server.ts\"",
     "build": "ng build --configuration production",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@angular/common": "^21.2.26",
@@ -36,10 +37,12 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.6",
     "concurrently": "^9.1.2",
+    "jsdom": "^27.0.1",
     "postcss": "^8.5.3",
     "prisma": "^6.19.3",
     "tailwindcss": "^4.1.12",
     "tsx": "^4.23.15",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.12"
   }
 }

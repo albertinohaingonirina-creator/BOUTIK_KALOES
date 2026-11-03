@@ -54,7 +54,7 @@
           type="button" 
           class="dropdown-item px-3 py-2 d-flex align-items-center justify-content-between text-truncate"
           [style.background-color]="layoutService.selectedStore() === s.nom ? '#F8F6F2' : 'transparent'"
-          (click)="selectStore(s.nom)">
+          (click)="selectStore(s)">
           <div class="d-flex align-items-center gap-2 text-truncate">
             <i class="bi bi-shop text-muted" style="color: #C5A059 !important;"></i>
             <span class="small fw-medium" [ngClass]="layoutService.selectedStore() === s.nom ? 'text-dark fw-bold' : 'text-secondary'">{{ s.nom }}</span>
@@ -72,31 +72,45 @@
         aria-label="Alertes de stock"
         (click)="toggleNotifications()">
         <i class="bi bi-bell fs-5" style="color: #1C130E;"></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white" style="font-size: 0.65rem;">
-          3
+        <span *ngIf="unreadAlertsCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white" style="font-size: 0.65rem;">
+          {{ unreadAlertsCount }}
         </span>
       </button>
 
       <div *ngIf="isNotificationsOpen" 
-           class="position-absolute end-0 mt-2 py-2 rounded-4 shadow-lg bg-white border border-kaloes" 
-           style="width: 320px; z-index: 1050;">
-        <div class="px-3 py-2 border-bottom d-flex align-items-center justify-content-between">
-          <span class="fw-bold small" style="color: #1C130E; font-family: 'Playfair Display', serif;">Alertes de Stock Atelier</span>
-          <span class="badge rounded-pill bg-danger-subtle text-danger small">3 ruptures</span>
+           class="position-absolute end-0 mt-2 py-2 rounded-4 shadow-lg bg-white border border-kaloes overflow-hidden" 
+           style="width: 340px; z-index: 1050;">
+        <div class="px-3 py-2 border-bottom d-flex align-items-center justify-content-between bg-light">
+          <span class="fw-bold small text-uppercase" style="color: #1C130E; font-size: 0.75rem; letter-spacing: 0.05em;">Alertes de Rupture</span>
+          <span class="badge rounded-pill bg-danger-subtle text-danger small fw-bold" *ngIf="unreadAlertsCount > 0">{{ unreadAlertsCount }} alerte(s)</span>
         </div>
-        <div class="list-group list-group-flush">
-          <div *ngFor="let alert of stockAlerts" class="p-3 border-bottom d-flex align-items-start gap-2">
-            <div class="p-2 rounded-circle bg-danger-subtle text-danger flex-shrink-0">
-              <i class="bi bi-exclamation-triangle" style="font-size: 0.85rem;"></i>
+        
+        <div class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
+          <div *ngIf="unreadAlertsCount === 0" class="p-4 text-center text-muted small">
+            <i class="bi bi-check-circle fs-3 d-block mb-2 text-success opacity-50"></i>
+            <span class="fw-semibold">Tous les stocks sont optimaux.</span>
+          </div>
+
+          <button *ngFor="let alert of stockAlerts" 
+               type="button"
+               class="list-group-item list-group-item-action p-3 border-bottom d-flex align-items-start gap-3 border-0 text-start bg-transparent"
+               style="cursor: pointer; transition: background-color 0.2s;"
+               (click)="readAndNavigate(alert)">
+            <div class="p-2 rounded-circle bg-danger-subtle text-danger flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+              <i class="bi bi-exclamation-triangle-fill" style="font-size: 0.95rem;"></i>
             </div>
             <div class="flex-grow-1 overflow-hidden">
               <span class="fw-bold d-block small text-truncate" style="color: #1C130E;">{{ alert.model }}</span>
-              <span class="text-muted d-block" style="font-size: 0.72rem;">UGS: {{ alert.ugs }} • Stock : <strong>{{ alert.stock }} pièce(s)</strong></span>
+              <span class="text-muted d-block mt-1" style="font-size: 0.72rem;">
+                UGS: <span class="font-monospace fw-semibold">{{ alert.ugs }}</span> • Reste : <strong class="text-danger">{{ alert.stock }} pièce(s)</strong>
+              </span>
             </div>
-          </div>
+            <i class="bi bi-chevron-right text-muted small align-self-center"></i>
+          </button>
         </div>
-        <div class="p-2 text-center">
-          <a routerLink="/articles" class="small fw-semibold text-decoration-none" style="color: #B86538;" (click)="isNotificationsOpen = false">Voir le catalogue complet</a>
+        
+        <div class="p-2 text-center border-top bg-light">
+          <a routerLink="/articles" class="small fw-bold text-decoration-none" style="color: #B86538;" (click)="isNotificationsOpen = false">Consulter l'Atelier</a>
         </div>
       </div>
     </div>

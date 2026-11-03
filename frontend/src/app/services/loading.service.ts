@@ -13,8 +13,10 @@ export class LoadingService {
   show(): void {
     this.activeRequests++;
     if (this.activeRequests === 1) {
-      this.isLoading$.next(true);
-      this.startProgress();
+      queueMicrotask(() => {
+        this.isLoading$.next(true);
+        this.startProgress();
+      });
     }
   }
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router'; // <-- CRUCIAL POUR LIRE LE CLIC DE LA CLOCHE
 
 @Component({
   standalone: true,
@@ -33,9 +34,25 @@ export class ArticlesComponent implements OnInit {
     photo: ''
   };
 
-  constructor(private apiService: ApiService) {}
+  // Ajout de ActivatedRoute ici
+  constructor(private apiService: ApiService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    // Permet d'écouter le clic depuis la cloche de notifications du Header
+    this.route.queryParams.subscribe(params => {
+      if (params['q']) {
+        this.searchTerm = params['q'];
+        if (this.articles.length > 0) {
+          this.applyFilter();
+        }
+      } else {
+        this.searchTerm = '';
+        if (this.articles.length > 0) {
+          this.applyFilter();
+        }
+      }
+    });
+
     this.loadArticles();
   }
 

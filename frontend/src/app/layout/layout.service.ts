@@ -1,17 +1,38 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { ApiService } from '../services/api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LayoutService {
+  private apiService = inject(ApiService);
+  
   isCollapsed = signal<boolean>(false);
   isMobileOpen = signal<boolean>(false);
-  selectedStore = signal<string>('Boutique Showroom');
-  stores = [
-    { id: '1', nom: 'Boutique Showroom', type: 'BOUTIQUE', code: 'SHOWROOM' },
-    { id: '2', nom: 'Dépôt Principal', type: 'DEPOT', code: 'DEPOT' },
-    { id: '3', nom: 'Revendeur Analakely', type: 'REVENDEUR', code: 'REVENDEUR' }
-  ];
+  selectedStore = signal<string>('Chargement...');
+  selectedStoreId = signal<string>('');
+  
+  stores: any[] = [];
+
+  constructor() {
+    this.loadStores();
+  }
+
+  loadStores(): void {
+    this.apiService.getMagasins().subscribe({
+      next: (res: any[]) => {
+        this.stores = res || [];
+        const userStoreId = this.apiService.getCurrentUser()?.magasinId;
+        
+        // Sélectionne le magasin de l'utilisateur, ou le premier de la liste
+        const current = this.stores.find(s => s.id === userStoreId) || this.stores[0];
+        if (current) {
+          this.selectedStore.set(current.nom);
+          this.selectedStoreId.set(current.id);
+        }
+      }
+    });
+  }
 
   toggleSidebar(): void {
     this.isCollapsed.update(val => !val);
@@ -25,7 +46,8 @@ export class LayoutService {
     this.isMobileOpen.set(false);
   }
 
-  setStore(storeNom: string): void {
-    this.selectedStore.set(storeNom);
+  setStore(store: any): void {
+    this.selectedStore.set(store.nom);
+    this.selectedStoreId.set(store.id);
   }
 }

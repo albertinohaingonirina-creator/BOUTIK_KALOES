@@ -354,4 +354,80 @@ router.get('/tickets', authenticate, async (req: AuthRequest, res: Response): Pr
   }
 });
 
+
+router.post('/articles', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { nom, ugs, categorie, prix_vente, alerte_stock } = req.body;
+
+    // Cherche ou crée la catégorie
+    let cat = await prisma.category.findUnique({ where: { nom: categorie } });
+    if (!cat) {
+      cat = await prisma.category.create({ data: { nom: categorie } });
+    }
+
+    // Crée le Produit puis sa Variante (UGS)
+    const result = await prisma.$transaction(async (tx) => {
+      const prod = await tx.product.create({
+        data: { nom, categorieId: cat.id }
+      });
+
+      const variant = await tx.productVariant.create({
+        data: {
+          produitId: prod.id,
+          ugs,
+          prixVente: Number(prix_vente),
+          seuilAlerte: Number(alerte_stock)
+        }
+      });
+
+      return variant;
+    });
+
+    res.status(201).json({ success: true, id: result.id });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+router.put('/articles/:id', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params; // C'est l'ID de la Variante (ID_ARTICLE côté front)
+    const { nom, ugs, categorie, prix_vente, alerte_stock } = req.body;
+
+    // 1. Mettre à jour la Variante
+    const updatedVariant = await prisma.productVariant.update({
+      where: { id },
+      data: {
+        ugs,
+        prixVente: Number(prix_vente),
+        seuilAlerte: Number(alerte_stock)
+      },
+      include: { produit: true }
+    });
+
+    // 2. Mettre à jour le nom du Produit associé
+    if (updatedVariant.produit.nom !== nom) {
+      await prisma.product.update({
+        where: { id: updatedVariant.produitId },
+        data: { nom }
+      });
+    }
+
+    // 3. Mettre à jour la catégorie si changée
+    const cat = await prisma.category.findUnique({ where: { nom: categorie } });
+    if (cat && updatedVariant.produit.categorieId !== cat.id) {
+      await prisma.product.update({
+        where: { id: updatedVariant.produitId },
+        data: { categorieId: cat.id }
+      });
+    }
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+
+
 export default router;
