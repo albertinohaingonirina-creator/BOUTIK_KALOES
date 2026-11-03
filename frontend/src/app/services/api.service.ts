@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap, map, shareReplay } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
@@ -70,6 +70,22 @@ export class ApiService {
     this.discountsCache$ = null;
     this.storesCache$ = null;
     this.usersCache$ = null;
+  }
+
+  getProfile(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/profile`);
+  }
+
+  updateProfile(profileData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/users/profile`, profileData);
+  }
+
+  changePassword(passwordData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/users/change-password`, passwordData);
+  }
+
+  getMovements(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/pos/movements`);
   }
 
   getPosCatalog(magasinId?: string): Observable<any> {
@@ -159,7 +175,8 @@ export class ApiService {
                 CATEGORIE: cat.nom,
                 PRIX_VENTE: v.prixVente,
                 ALERTE_STOCK: v.seuilAlerte,
-                EMPLACEMENT: 'Dépôt Principal'
+                EMPLACEMENT: v.stocks?.[0]?.emplacement?.code || 'DEP-A-01',
+                STOCKS: v.stocks || []
               });
             });
           });
@@ -208,10 +225,6 @@ export class ApiService {
     );
   }
 
-  getMovements(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/pos/movements`);
-  }
-
   saveInventaire(inventaireData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/pos/inventory`, inventaireData).pipe(
       tap(() => {
@@ -245,24 +258,5 @@ export class ApiService {
 
   getLogs(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/logs`);
-  }
-
-  getProfile(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/users/profile`);
-  }
-
-  updateProfile(profileData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/users/profile`, profileData).pipe(
-      tap((res) => {
-        if (res.user) {
-          const current = this.getCurrentUser() || {};
-          this.setStorageItem('kaloes_user', JSON.stringify({ ...current, ...res.user }));
-        }
-      })
-    );
-  }
-
-  changePassword(passwords: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/users/change-password`, passwords);
   }
 }

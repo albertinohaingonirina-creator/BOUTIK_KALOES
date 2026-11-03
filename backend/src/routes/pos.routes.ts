@@ -5,6 +5,76 @@ import { MovementType, OrderStatus, PaymentMethod } from '@prisma/client';
 
 const router = Router();
 
+router.get('/movements', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const movements = await prisma.stockMovement.findMany({
+      orderBy: { date: 'desc' },
+      take: 50,
+      include: {
+        variante: {
+          include: { produit: true }
+        },
+        source: true,
+        dest: true,
+        operateur: { select: { nom: true } }
+      }
+    });
+    res.status(200).json(movements);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
+router.post('/movements', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Non authentifié' });
+      return;
+    }
+
+    const { typeMvt, varianteId, quantite, sourceId, destId, refPiece } = req.body;
+
+    const result = await prisma.$transaction(async (tx) => {
+      const qte = Number(quantite);
+
+      if (sourceId) {
+        await tx.stock.upsert({
+          where: { magasinId_varianteId: { magasinId: sourceId, varianteId } },
+          update: { quantite: { decrement: qte } },
+          create: { magasinId: sourceId, varianteId, quantite: -qte }
+        });
+      }
+
+      if (destId) {
+        await tx.stock.upsert({
+          where: { magasinId_varianteId: { magasinId: destId, varianteId } },
+          update: { quantite: { increment: qte } },
+          create: { magasinId: destId, varianteId, quantite: qte }
+        });
+      }
+
+      const mvt = await tx.stockMovement.create({
+        data: {
+          type: typeMvt as MovementType,
+          varianteId,
+          quantite: qte,
+          sourceId: sourceId || null,
+          destId: destId || null,
+          refPiece: refPiece || `MVT-${Date.now()}`,
+          userId
+        }
+      });
+
+      return mvt;
+    });
+
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 router.get('/stores', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const stores = await prisma.store.findMany({
@@ -24,7 +94,7 @@ router.get('/stores', authenticate, async (req: AuthRequest, res: Response): Pro
 
 router.get('/catalog', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const magasinId = req.user?.magasinId || (req.query['magasinId'] as string);
+    const magasinId = req.user?.magasinId || (req.query.magasinId as string);
 
     const categories = await prisma.category.findMany({
       include: {
@@ -32,7 +102,12 @@ router.get('/catalog', authenticate, async (req: AuthRequest, res: Response): Pr
           include: {
             variantes: {
               include: {
-                stocks: magasinId ? { where: { magasinId } } : true
+                stocks: {
+                  include: {
+                    magasin: true,
+                    emplacement: true
+                  }
+                }
               }
             }
           }
@@ -190,90 +265,6 @@ router.post('/checkout', authenticate, async (req: AuthRequest, res: Response): 
   }
 });
 
-router.get('/movements', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const movements = await prisma.stockMovement.findMany({
-      take: 20,
-      orderBy: { date: 'desc' },
-      include: {
-        variante: {
-          include: { produit: true }
-        },
-        source: true,
-        dest: true,
-        operateur: { select: { nom: true } }
-      }
-    });
-    res.status(200).json(movements);
-  } catch (error) {
-    res.status(500).json({ error: String(error) });
-  }
-});
-
-router.post('/movements', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const userId = req.user?.id;
-    if (!userId) {
-      res.status(401).json({ error: 'Non authentifie' });
-      return;
-    }
-
-    const { typeMvt, article, varianteId: passedVarId, quantite, sourceId, destId, magasinSource, magasinDestination, refPiece } = req.body;
-    let targetVarianteId = passedVarId || article;
-
-    const existingVar = await prisma.productVariant.findFirst({
-      where: {
-        OR: [
-          { id: String(targetVarianteId) },
-          { ugs: String(targetVarianteId) }
-        ]
-      }
-    });
-
-    if (existingVar) {
-      targetVarianteId = existingVar.id;
-    } else {
-      const firstVar = await prisma.productVariant.findFirst();
-      if (firstVar) {
-        targetVarianteId = firstVar.id;
-      }
-    }
-
-    const sId = sourceId || magasinSource || null;
-    const dId = destId || magasinDestination || null;
-    const qte = Math.max(1, Number(quantite) || 1);
-
-    let mvtType = MovementType.TRANSFERT_ENVOI;
-    if (typeMvt === 'ENTREE') mvtType = MovementType.ENTREE_PRODUCTION;
-    else if (typeMvt === 'GIFTING') mvtType = MovementType.GIFTING;
-    else if (typeMvt === 'TRANSFERT') mvtType = MovementType.TRANSFERT_ENVOI;
-
-    const mvt = await prisma.stockMovement.create({
-      data: {
-        type: mvtType,
-        varianteId: targetVarianteId,
-        quantite: qte,
-        sourceId: sId,
-        destId: dId,
-        refPiece: refPiece || `TR-${Math.floor(1000 + Math.random() * 9000)}`,
-        userId
-      },
-      include: {
-        variante: {
-          include: { produit: true }
-        },
-        source: true,
-        dest: true,
-        operateur: { select: { nom: true } }
-      }
-    });
-
-    res.status(201).json(mvt);
-  } catch (error) {
-    res.status(500).json({ error: String(error) });
-  }
-});
-
 router.post('/inventory', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.user?.id;
@@ -337,7 +328,7 @@ router.get('/dashboard-kpis', authenticate, async (req: AuthRequest, res: Respon
 
 router.get('/tickets', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const magasinId = req.user?.magasinId || (req.query['magasinId'] as string);
+    const magasinId = req.user?.magasinId || (req.query.magasinId as string);
 
     const orders = await prisma.order.findMany({
       where: magasinId ? { magasinId } : {},

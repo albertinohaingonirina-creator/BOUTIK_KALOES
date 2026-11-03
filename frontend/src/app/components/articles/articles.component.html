@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div class="card card-kaloes border-0 shadow-sm rounded-4 mb-4 p-3">
+  <div class="card card-kaloes border-0 shadow-sm rounded-4 mb-4 p-3 bg-white">
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
       <div class="input-group" style="max-width: 420px;">
         <span class="input-group-text bg-light border-0 ps-3 text-muted"><i class="bi bi-search"></i></span>
@@ -41,7 +41,7 @@
     </div>
   </div>
 
-  <div class="card card-kaloes border-0 shadow-sm rounded-4 overflow-hidden">
+  <div class="card card-kaloes border-0 shadow-sm rounded-4 overflow-hidden bg-white">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
         <thead style="background-color: #F8F6F2; border-bottom: 2px solid #E6E1DA;">
@@ -56,10 +56,21 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let art of filteredArticles" class="border-bottom border-kaloes">
+          <tr *ngFor="let art of filteredArticles" 
+              class="border-bottom border-kaloes cursor-pointer" 
+              style="transition: background-color 0.15s ease;"
+              (click)="openDetailModal(art)">
             <td class="ps-4 py-3">
-              <div class="fw-bold fs-6" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ art.NOM }}</div>
-              <span class="text-muted small font-monospace">REF : {{ art.ID_ARTICLE }}</span>
+              <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center shadow-sm" 
+                     style="width: 42px; height: 42px; background-color: #F8F6F2; border: 1px solid #E6E1DA; color: #1C130E;">
+                  <i class="bi bi-handbag fs-5"></i>
+                </div>
+                <div>
+                  <div class="fw-bold fs-6" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ art.NOM }}</div>
+                  <span class="text-muted small font-monospace">REF : {{ art.ID_ARTICLE }}</span>
+                </div>
+              </div>
             </td>
             <td>
               <span class="badge bg-light text-dark border px-2.5 py-1.5 font-monospace rounded-3">{{ art.UGS }}</span>
@@ -82,7 +93,8 @@
               {{ art.PRIX_VENTE | number }} Ar
             </td>
             <td class="pe-4 text-end">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3 shadow-none border-kaloes" (click)="openEditModal(art)">
+              <button class="btn btn-sm btn-outline-dark rounded-pill px-3 shadow-none border-kaloes" 
+                      (click)="$event.stopPropagation(); openEditModal(art)">
                 <i class="bi bi-sliders me-1"></i> Modifier
               </button>
             </td>
@@ -95,6 +107,140 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="isDetailModalOpen" (click)="closeDetailModal()" style="background-color: rgba(28, 19, 14, 0.6); backdrop-filter: blur(5px); z-index: 1060;"></div>
+
+<div class="modal d-block fade show" *ngIf="isDetailModalOpen" tabindex="-1" style="z-index: 1070;">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content border-0 rounded-4 shadow-2xl overflow-hidden bg-white">
+      <div class="modal-header text-white px-4 py-3" style="background-color: #1C130E; border-bottom: 2px solid #C5A059;">
+        <div class="d-flex align-items-center gap-3">
+          <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; background: rgba(197, 160, 89, 0.2); border: 1px solid #C5A059;">
+            <i class="bi bi-gem" style="color: #C5A059;"></i>
+          </div>
+          <div>
+            <span class="text-uppercase small" style="color: #C5A059; font-size: 0.7rem; letter-spacing: 0.12em;">Fiche Atelier & Haute Maroquinerie</span>
+            <h5 class="modal-title fw-bold mb-0" style="font-family: 'Playfair Display', serif;">{{ selectedArticleDetail?.NOM }}</h5>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white shadow-none" aria-label="Fermer" (click)="closeDetailModal()"></button>
+      </div>
+
+      <div class="modal-body p-4 p-lg-5" style="background-color: #FAF7F2;">
+        <div class="row g-4 align-items-stretch">
+          
+          <div class="col-12 col-lg-5 d-flex flex-column gap-3">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white text-center h-100 d-flex flex-column justify-content-between" style="border: 1px solid #E6E1DA;">
+              <div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge rounded-pill px-3 py-1 fw-medium" style="background-color: #F7F1E5; color: #C5A059; border: 1px solid #C5A059;">
+                    {{ selectedArticleDetail?.CATEGORIE }}
+                  </span>
+                  <span class="badge bg-light text-dark border font-monospace">{{ selectedArticleDetail?.UGS }}</span>
+                </div>
+
+                <div class="rounded-4 overflow-hidden mb-4 p-4 d-flex align-items-center justify-content-center" style="background-color: #F8F6F2; min-height: 200px;">
+                  <img *ngIf="selectedArticleDetail?.PHOTO" [src]="selectedArticleDetail.PHOTO" alt="{{ selectedArticleDetail?.NOM }}" class="img-fluid rounded-3 shadow-sm" style="max-height: 190px; object-fit: contain;">
+                  <div *ngIf="!selectedArticleDetail?.PHOTO" class="text-center py-4 text-muted">
+                    <i class="bi bi-handbag display-3 d-block mb-2 opacity-50" style="color: #1C130E;"></i>
+                    <span class="small font-monospace">Création Kaloès Madagascar</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-4" style="background-color: #F8F6F2; border: 1px dashed #D5CABA;">
+                <div class="d-flex align-items-center justify-content-center gap-3">
+                  <img [src]="getQrCodeUrl(selectedArticleDetail)" alt="QR Code Article" class="img-fluid rounded-3 bg-white p-2 shadow-sm" style="width: 110px; height: 110px;">
+                  <div class="text-start">
+                    <span class="text-uppercase small fw-bold d-block" style="color: #1C130E; font-size: 0.75rem; letter-spacing: 0.05em;">Traçabilité Instantanée</span>
+                    <p class="text-muted small mb-2" style="font-size: 0.7rem; line-height: 1.3;">QR Code prêt pour étiquetage en atelier et scan caisse POS.</p>
+                    <button type="button" class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center gap-2 text-white border-0 shadow-sm" style="background-color: #1C130E; font-size: 0.75rem;" (click)="printQrLabel(selectedArticleDetail)">
+                      <i class="bi bi-printer"></i>
+                      <span>Imprimer l'étiquette</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-7 d-flex flex-column gap-3">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white h-100" style="border: 1px solid #E6E1DA;">
+              <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-4">
+                <div>
+                  <span class="text-muted small text-uppercase fw-semibold" style="letter-spacing: 0.05em;">Tarification Boutique Showroom</span>
+                  <div class="display-6 fw-bold tabular-nums" style="color: #B86538; font-family: 'Playfair Display', serif;">
+                    {{ selectedArticleDetail?.PRIX_VENTE | number }} Ar
+                  </div>
+                </div>
+                <div class="text-end">
+                  <span class="text-muted small text-uppercase fw-semibold d-block">Emplacement Dépôt</span>
+                  <span class="badge px-3 py-2 rounded-pill font-monospace" style="background-color: #F8F6F2; color: #1C130E; border: 1px solid #D5CABA;">
+                    <i class="bi bi-geo-alt me-1 text-muted"></i>{{ selectedArticleDetail?.EMPLACEMENT || 'DEP-A-01' }}
+                  </span>
+                </div>
+              </div>
+
+              <h6 class="fw-bold mb-3" style="color: #1C130E; font-family: serif;">Disponibilité Multi-Sites (WMS)</h6>
+              <div class="row g-3 mb-4">
+                <div class="col-12 col-md-4">
+                  <div class="p-3 rounded-3 h-100" style="background-color: #F8F6F2; border: 1px solid #E6E1DA;">
+                    <span class="small text-muted d-block text-uppercase fw-semibold" style="font-size: 0.7rem;">Magasin Local (Dépôt)</span>
+                    <span class="fs-4 fw-bold tabular-nums" style="color: #1C130E;">{{ getStoreStock(selectedArticleDetail, 'DEPOT') }} u.</span>
+                    <span class="d-block small text-success fw-medium" style="font-size: 0.75rem;"><i class="bi bi-check-circle-fill me-1"></i>Stock Central</span>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div class="p-3 rounded-3 h-100" style="background-color: #F8F6F2; border: 1px solid #E6E1DA;">
+                    <span class="small text-muted d-block text-uppercase fw-semibold" style="font-size: 0.7rem;">Boutique Showroom</span>
+                    <span class="fs-4 fw-bold tabular-nums" style="color: #1C130E;">{{ getStoreStock(selectedArticleDetail, 'BOUTIQUE') }} u.</span>
+                    <span class="d-block small text-primary fw-medium" style="font-size: 0.75rem;"><i class="bi bi-shop me-1"></i>Prêt en Caisse</span>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div class="p-3 rounded-3 h-100" style="background-color: #F8F6F2; border: 1px solid #E6E1DA;">
+                    <span class="small text-muted d-block text-uppercase fw-semibold" style="font-size: 0.7rem;">Revendeur Analakely</span>
+                    <span class="fs-4 fw-bold tabular-nums" style="color: #1C130E;">{{ getStoreStock(selectedArticleDetail, 'REVENDEUR') }} u.</span>
+                    <span class="d-block small text-warning fw-medium" style="font-size: 0.75rem;"><i class="bi bi-box-arrow-up-right me-1"></i>En Dépôt-Vente</span>
+                  </div>
+                </div>
+              </div>
+
+              <h6 class="fw-bold mb-2" style="color: #1C130E; font-family: serif;">Caractéristiques Matières & Confection</h6>
+              <div class="p-3 rounded-3 mb-4" style="background-color: #F8F6F2; border: 1px solid #E6E1DA;">
+                <ul class="list-unstyled mb-0 small text-muted d-flex flex-column gap-2">
+                  <li class="d-flex justify-content-between">
+                    <span class="fw-semibold text-dark">Composition :</span>
+                    <span>Raphia 100% naturel de Madagascar & Cuir pleine fleur</span>
+                  </li>
+                  <li class="d-flex justify-content-between">
+                    <span class="fw-semibold text-dark">Confection :</span>
+                    <span>Tressage artisanal à la main aux ateliers Kaloès</span>
+                  </li>
+                  <li class="d-flex justify-content-between">
+                    <span class="fw-semibold text-dark">Seuil d'alerte automatique :</span>
+                    <span class="badge bg-light text-secondary border">Min {{ selectedArticleDetail?.ALERTE_STOCK }} unités</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="d-flex justify-content-end gap-2 mt-auto">
+                <button type="button" class="btn btn-outline-dark rounded-pill px-4 py-2 border-kaloes" (click)="closeDetailModal()">
+                  Fermer
+                </button>
+                <button type="button" class="btn rounded-pill px-4 py-2 text-white border-0 fw-semibold" style="background-color: #B86538;" (click)="closeDetailModal(); openEditModal(selectedArticleDetail)">
+                  <i class="bi bi-pencil-square me-1"></i>
+                  <span>Modifier la fiche</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 </div>
