@@ -1,101 +1,24 @@
-<style>
-  @keyframes kaloesBounce {
-    0%, 100% {
-      transform: translateY(0) scale(1);
-    }
-    50% {
-      transform: translateY(-8px) scale(1.08);
-    }
-  }
-
-  @keyframes pulseRing {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .kaloes-spinner-ring {
-    width: 72px;
-    height: 72px;
-    border: 3.5px solid rgba(109, 76, 65, 0.15);
-    border-top-color: #3E2723;
-    border-right-color: #8D6E63;
-    border-radius: 50%;
-    animation: pulseRing 0.9s infinite cubic-bezier(0.55, 0.15, 0.45, 0.85);
-  }
-
-  .kaloes-logo-bounce {
-    animation: kaloesBounce 1.6s infinite ease-in-out;
-  }
-</style>
-
 <div class="kaloes-top-loader" [style.width.%]="loadingService.progress$ | async"></div>
 
 <div *ngIf="loadingService.isLoading$ | async" 
      class="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center" 
-     style="background-color: rgba(31, 20, 14, 0.45); backdrop-filter: blur(5px); z-index: 99990;">
+     style="background-color: rgba(24, 17, 13, 0.6); backdrop-filter: blur(8px); z-index: 99990;">
   
   <div class="p-4 rounded-4 text-center shadow-lg bg-white border d-flex flex-column align-items-center" 
-       style="width: 250px; border-color: #EFEBE9;">
+       style="width: 260px; border-color: #E6E1DA;">
     
-    <div class="position-relative d-flex align-items-center justify-content-center mb-3" style="width: 72px; height: 72px;">
-      <div class="kaloes-spinner-ring position-absolute"></div>
-      <img src="assets/logoKaloes.png" alt="Kaloès" class="kaloes-logo-bounce img-fluid" style="max-height: 38px; width: auto; object-fit: contain;">
+    <div class="position-relative d-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+      <div class="spinner-border" style="color: #C5A059; width: 48px; height: 48px; border-width: 3px;" role="status"></div>
+      <img src="assets/logoKaloes.png" alt="Kaloès" class="position-absolute" style="max-height: 28px; width: auto; object-fit: contain;">
     </div>
 
-    <h6 class="fw-bold mb-1" style="color: #3E2723; font-family: serif; font-size: 0.95rem;">Traitement en cours...</h6>
-    <span class="text-muted" style="font-size: 0.75rem;">Veuillez patienter un instant</span>
+    <h6 class="fw-bold mb-1" style="color: #1C130E; font-family: 'Playfair Display', serif; font-size: 1rem;">Maison Kaloès</h6>
+    <span class="text-muted" style="font-size: 0.72rem; letter-spacing: 0.1em;">SYNCHRONISATION</span>
   </div>
 </div>
 
-<div class="position-fixed top-0 end-0 p-3" style="z-index: 105000; max-width: 380px;">
-  <div *ngFor="let toast of toastService.toasts()" 
-       class="alert border-0 shadow-lg rounded-4 p-3 mb-2 d-flex align-items-center gap-3 fade show bg-white border-start border-4"
-       [ngClass]="{
-         'border-success': toast.type === 'success',
-         'border-danger': toast.type === 'error',
-         'border-warning': toast.type === 'warning',
-         'border-info': toast.type === 'info'
-       }">
-    <i class="bi fs-4" [ngClass]="{
-      'bi-check-circle-fill text-success': toast.type === 'success',
-      'bi-x-circle-fill text-danger': toast.type === 'error',
-      'bi-exclamation-circle-fill text-warning': toast.type === 'warning',
-      'bi-info-circle-fill text-info': toast.type === 'info'
-    }"></i>
-    <div class="flex-grow-1 small fw-semibold text-dark">{{ toast.message }}</div>
-    <button type="button" class="btn-close btn-sm shadow-none" (click)="toastService.remove(toast.id)"></button>
-  </div>
-</div>
+<app-toast></app-toast>
 
-<nav *ngIf="apiService.isLoggedIn()" class="navbar navbar-dark shadow-sm py-3" style="background-color: #3E2723;">
-  <div class="container-fluid px-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-    <a class="navbar-brand fw-bold d-flex align-items-center fs-4 text-white text-decoration-none" routerLink="/caisse">
-      <i class="bi bi-shop me-2"></i><span style="font-family: serif;">Kaloès MADAGASCAR</span>
-    </a>
-    
-    <div class="d-flex flex-wrap justify-content-center gap-2 align-items-center">
-      <a routerLink="/caisse" routerLinkActive="btn-light text-kaloes-dark" class="btn btn-sm px-3 py-2 fw-semibold rounded-pill btn-outline-light text-decoration-none"><i class="bi bi-calculator me-2"></i> Caisse</a>
-      <a routerLink="/articles" routerLinkActive="btn-light text-kaloes-dark" class="btn btn-sm px-3 py-2 fw-semibold rounded-pill btn-outline-light text-decoration-none"><i class="bi bi-box-seam me-2"></i> Catalogue</a>
-      <a routerLink="/clients" routerLinkActive="btn-light text-kaloes-dark" class="btn btn-sm px-3 py-2 fw-semibold rounded-pill btn-outline-light text-decoration-none"><i class="bi bi-people me-2"></i> Clients</a>
-      <a routerLink="/transfert" routerLinkActive="btn-light text-kaloes-dark" class="btn btn-sm px-3 py-2 fw-semibold rounded-pill btn-outline-light text-decoration-none"><i class="bi bi-arrow-left-right me-2"></i> Stocks</a>
-      <a routerLink="/inventaire" routerLinkActive="btn-light text-kaloes-dark" class="btn btn-sm px-3 py-2 fw-semibold rounded-pill btn-outline-light text-decoration-none"><i class="bi bi-clipboard-check me-2"></i> Inventaires</a>
-      
-      <ng-container *ngIf="apiService.getCurrentUser()?.role === 'ADMIN' || apiService.getCurrentUser()?.role === 'MANAGER'">
-        <div class="vr bg-white mx-1 d-none d-md-block" style="opacity: 0.3;"></div>
-        <a routerLink="/dashboard" routerLinkActive="btn-light text-kaloes-dark" class="btn btn-sm px-3 py-2 fw-semibold rounded-pill btn-outline-light text-decoration-none"><i class="bi bi-speedometer2 me-2"></i> Stats</a>
-        <a routerLink="/loyverse" routerLinkActive="btn-light text-kaloes-dark" class="btn btn-sm px-3 py-2 fw-semibold rounded-pill btn-outline-light text-decoration-none"><i class="bi bi-cloud-arrow-down me-2"></i> Loyverse</a>
-        <a routerLink="/utilisateurs" routerLinkActive="btn-light text-kaloes-dark" class="btn btn-sm px-3 py-2 fw-semibold rounded-pill btn-outline-light text-decoration-none"><i class="bi bi-person-gear me-2"></i> Paramètres</a>
-      </ng-container>
-
-      <button class="btn btn-sm px-3 py-2 fw-bold rounded-pill text-danger bg-white ms-2 shadow-sm" (click)="logout()">
-        <i class="bi bi-box-arrow-right me-1"></i> Quitter
-      </button>
-    </div>
-  </div>
-</nav>
-
-<main [ngClass]="apiService.isLoggedIn() ? 'py-3 px-2 px-md-4' : ''">
-  <router-outlet></router-outlet>
-</main>
+<router-outlet></router-outlet>
 
 <app-confirm-modal></app-confirm-modal>

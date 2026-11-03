@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -65,6 +65,8 @@ model User {
   nom          String
   email        String          @unique
   motDePasse   String
+  avatar       String?
+  telephone    String?
   codePin      String?
   role         Role            @default(CAISSIER)
   actif        Boolean         @default(true)

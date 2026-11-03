@@ -46,6 +46,33 @@ export class PosComponent implements OnInit {
   paymentMethod: string = 'ESPECES';
   amountGiven: number = 0;
   paymentReference: string = '';
+
+  get montantRecu(): number {
+    return this.amountGiven;
+  }
+  set montantRecu(val: number) {
+    this.amountGiven = val;
+  }
+
+  getMonnaieARendre(): number {
+    return this.getChangeAmount();
+  }
+
+  validateCheckout(): void {
+    this.processPayment();
+  }
+
+  getLeatherColor(couleur: string): string {
+    const c = (couleur || '').toLowerCase();
+    if (c.includes('café') || c.includes('cafe')) return '#4A2E18';
+    if (c.includes('noir')) return '#1A1A1A';
+    if (c.includes('citron')) return '#D4AF37';
+    if (c.includes('thé') || c.includes('the')) return '#B87333';
+    if (c.includes('naturel')) return '#E8DCC4';
+    if (c.includes('taupe')) return '#8C7D70';
+    if (c.includes('cognac')) return '#9E4714';
+    return '#8D6E63';
+  }
   
   lastReceipt: any = null;
   isLoading: boolean = false;

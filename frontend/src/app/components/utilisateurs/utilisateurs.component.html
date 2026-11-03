@@ -1,58 +1,59 @@
-<div class="container-fluid px-2 px-md-4">
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+<div class="container-fluid px-0 py-3">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5 border-bottom pb-4 border-kaloes">
     <div>
-      <h3 class="fw-bold mb-1" style="color: #3E2723; font-family: serif; letter-spacing: -0.5px;">Gestion des Utilisateurs</h3>
-      <p class="text-muted small mb-0">Paramétrage des accès, création des caissiers, managers et magasiniers.</p>
+      <span class="text-uppercase small fw-bold tracking-widest text-muted" style="letter-spacing: 0.15em;">Sécurité & Équipe</span>
+      <h2 class="fw-bold mb-1 display-6" style="font-family: 'Playfair Display', serif; color: #1C130E;">Gestion des Utilisateurs</h2>
+      <p class="text-muted small mb-0">Paramétrage des accès et habilitations de la Maison Kaloès</p>
     </div>
-    <button class="btn btn-dark rounded-pill px-4 py-2 small fw-semibold shadow-sm d-flex align-items-center gap-2" style="background-color: #3E2723; border-color: #3E2723;" (click)="openCreateModal()">
+    <button class="btn rounded-pill px-4 py-2 small fw-semibold shadow-sm d-flex align-items-center gap-2 text-white border-0" style="background-color: #B86538;" (click)="openCreateModal()">
       <i class="bi bi-person-plus-fill"></i>
       <span>Nouvel Utilisateur</span>
     </button>
   </div>
 
-  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+  <div class="card card-kaloes border-0 shadow-sm rounded-4 overflow-hidden">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
-        <thead style="background-color: #F8F5F2;">
-          <tr class="text-muted small text-uppercase" style="letter-spacing: 0.5px;">
-            <th class="ps-4 py-3">Nom Complet</th>
-            <th class="py-3">E-mail</th>
-            <th class="py-3">Rôle système</th>
-            <th class="py-3">Magasin Assigné</th>
+        <thead style="background-color: #F8F6F2; border-bottom: 2px solid #E6E1DA;">
+          <tr class="text-muted small text-uppercase" style="letter-spacing: 0.08em; font-size: 0.75rem;">
+            <th class="ps-4 py-3">Collaborateur</th>
+            <th class="py-3">Adresse E-mail</th>
+            <th class="py-3">Rôle Système</th>
+            <th class="py-3">Magasin / Atelier</th>
             <th class="py-3">Statut</th>
-            <th class="pe-4 py-3 text-end">Action</th>
+            <th class="pe-4 py-3 text-end">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let u of users" class="border-bottom">
-            <td class="ps-4 py-3 fw-bold text-dark">{{ u.nom }}</td>
-            <td class="text-muted">{{ u.email }}</td>
+          <tr *ngFor="let u of users" class="border-bottom border-kaloes">
+            <td class="ps-4 py-3 fw-bold" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ u.nom }}</td>
+            <td class="text-muted small font-monospace">{{ u.email }}</td>
             <td>
-              <span class="badge rounded-pill px-3 py-1" 
+              <span class="badge rounded-pill px-3 py-1 fw-medium" 
                 [ngClass]="{
-                  'bg-danger': u.role === 'ADMIN',
-                  'bg-primary': u.role === 'MANAGER',
-                  'bg-success': u.role === 'CAISSIER',
-                  'bg-info text-dark': u.role === 'MAGASINIER'
+                  'bg-dark text-white': u.role === 'ADMIN',
+                  'bg-secondary text-white': u.role === 'MANAGER',
+                  'bg-success-subtle text-success': u.role === 'CAISSIER',
+                  'bg-info-subtle text-info': u.role === 'MAGASINIER'
                 }">
                 {{ u.role }}
               </span>
             </td>
-            <td><span class="text-secondary small fw-semibold"><i class="bi bi-geo-alt me-1"></i>{{ getStoreName(u.magasinId) }}</span></td>
+            <td><span class="text-secondary small fw-semibold"><i class="bi bi-geo-alt me-1 text-muted"></i>{{ getStoreName(u.magasinId) }}</span></td>
             <td>
-              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1" *ngIf="u.actif">Actif</span>
-              <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1" *ngIf="!u.actif">Inactif</span>
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small" *ngIf="u.actif">Actif</span>
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small" *ngIf="!u.actif">Inactif</span>
             </td>
             <td class="pe-4 text-end">
-              <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-none border" (click)="openEditModal(u)">
+              <button class="btn btn-sm btn-outline-dark rounded-pill px-3 shadow-none border-kaloes" (click)="openEditModal(u)">
                 <i class="bi bi-pencil-square me-1"></i> Modifier
               </button>
             </td>
           </tr>
           <tr *ngIf="users.length === 0">
             <td colspan="6" class="text-center py-5 text-muted">
-              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-              {{ isLoading ? 'Chargement...' : 'Aucun utilisateur trouvé.' }}
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              {{ isLoading ? 'Chargement de l\'équipe...' : 'Aucun utilisateur trouvé.' }}
             </td>
           </tr>
         </tbody>
@@ -61,13 +62,16 @@
   </div>
 </div>
 
-<div class="modal-backdrop fade show" *ngIf="isModalOpen" (click)="closeModal()" style="background-color: rgba(62, 39, 35, 0.45); backdrop-filter: blur(4px); z-index: 1040;"></div>
+<div class="modal-backdrop fade show" *ngIf="isModalOpen" (click)="closeModal()" style="background-color: rgba(28, 19, 14, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
 <div class="modal d-block fade show" *ngIf="isModalOpen" tabindex="-1" style="z-index: 1050;">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-      <div class="modal-header text-white px-4 py-3" style="background-color: #3E2723;">
-        <h5 class="modal-title fw-bold" style="font-family: serif;">{{ isEditing ? 'Modifier Utilisateur' : 'Créer un Utilisateur' }}</h5>
-        <button type="button" class="btn-close btn-close-white shadow-none" (click)="closeModal()"></button>
+      <div class="modal-header text-white px-4 py-3" style="background-color: #1C130E; border-bottom: 2px solid #C5A059;">
+        <div>
+          <span class="text-uppercase small" style="color: #C5A059; font-size: 0.7rem; letter-spacing: 0.1em;">Habilitations</span>
+          <h5 class="modal-title fw-bold" style="font-family: 'Playfair Display', serif;">{{ isEditing ? 'Modifier Utilisateur' : 'Créer un Utilisateur' }}</h5>
+        </div>
+        <button type="button" class="btn-close btn-close-white shadow-none" aria-label="Fermer" (click)="closeModal()"></button>
       </div>
       <form (ngSubmit)="saveUser()">
         <div class="modal-body p-4 bg-white">
@@ -77,7 +81,7 @@
           </div>
           <div class="mb-3">
             <label class="form-label small fw-semibold text-muted">Adresse E-mail</label>
-            <input type="email" class="form-control rounded-3 py-2" [(ngModel)]="userForm.email" name="email" required>
+            <input type="email" class="form-control rounded-3 py-2 font-monospace" [(ngModel)]="userForm.email" name="email" required>
           </div>
           <div class="mb-3">
             <label class="form-label small fw-semibold text-muted">Mot de passe {{ isEditing ? '(Laisser vide pour conserver)' : '' }}</label>
@@ -104,7 +108,7 @@
         </div>
         <div class="modal-footer bg-light px-4 py-3 border-0 d-flex justify-content-between">
           <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-dark rounded-pill px-4 fw-semibold" style="background-color: #3E2723; border-color: #3E2723;" [disabled]="isLoading">
+          <button type="submit" class="btn rounded-pill px-4 fw-semibold text-white border-0" style="background-color: #B86538;" [disabled]="isLoading">
             {{ isEditing ? 'Mettre à jour' : 'Créer' }}
           </button>
         </div>

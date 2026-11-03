@@ -1,114 +1,120 @@
-<div class="container-fluid px-2 px-md-4">
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+<div class="container-fluid px-0 py-3">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5 border-bottom pb-4 border-kaloes">
     <div>
-      <h3 class="fw-bold mb-1" style="color: #3E2723; font-family: serif; letter-spacing: -0.5px;">Passerelle de Ventes & Sorties Loyverse</h3>
+      <span class="text-uppercase small fw-bold tracking-widest text-muted" style="letter-spacing: 0.15em;">Synchronisation & POS</span>
+      <h2 class="fw-bold mb-1 display-6" style="font-family: 'Playfair Display', serif; color: #1C130E;">Passerelle Loyverse</h2>
       <p class="text-muted small mb-0">Ingestion des rapports de caisse POS, décrémentation des stocks Boutique et traçabilité du Gifting</p>
     </div>
 
     <div class="d-flex align-items-center gap-2">
-      <label class="btn btn-outline-dark rounded-pill px-3 py-2 small fw-semibold shadow-sm mb-0 cursor-pointer d-flex align-items-center gap-2">
-        <i class="bi bi-cloud-arrow-up"></i>
+      <label class="btn btn-outline-dark rounded-pill px-4 py-2 small fw-semibold shadow-sm mb-0 cursor-pointer d-flex align-items-center gap-2 border-kaloes text-dark bg-white">
+        <i class="bi bi-cloud-arrow-up" style="color: #C5A059;"></i>
         <span>Importer Rapport Loyverse (CSV)</span>
         <input type="file" accept=".csv" (change)="handleCSVUpload($event)" hidden>
       </label>
 
-      <button class="btn btn-dark rounded-pill px-4 py-2 small fw-semibold shadow-sm d-flex align-items-center gap-2" style="background-color: #3E2723; border-color: #3E2723;" (click)="synchroniserStocksBoutique()" [disabled]="isLoading || lignesVentes.length === 0">
+      <button class="btn rounded-pill px-4 py-2 small fw-semibold shadow-sm d-flex align-items-center gap-2 text-white border-0" style="background-color: #B86538;" (click)="synchroniserStocksBoutique()" [disabled]="isLoading || lignesVentes.length === 0">
         <i class="bi bi-arrow-repeat"></i>
         <span>Synchroniser vers Google Sheets</span>
       </button>
     </div>
   </div>
 
-  <div *ngIf="successMessage" class="alert alert-success border-0 rounded-4 shadow-sm py-3 mb-4 d-flex align-items-center gap-2">
+  <div *ngIf="successMessage" class="alert border-0 rounded-4 shadow-sm py-3 px-4 mb-4 d-flex align-items-center gap-2" style="background-color: #F0FDF4; color: #166534; border-left: 4px solid #16A34A !important;">
     <i class="bi bi-check-circle-fill fs-5"></i>
     <span>{{ successMessage }}</span>
   </div>
 
-  <div *ngIf="errorMessage" class="alert alert-danger border-0 rounded-4 shadow-sm py-3 mb-4 d-flex align-items-center gap-2">
+  <div *ngIf="errorMessage" class="alert border-0 rounded-4 shadow-sm py-3 px-4 mb-4 d-flex align-items-center gap-2" style="background-color: #FDF4F0; color: #B86538; border-left: 4px solid #B86538 !important;">
     <i class="bi bi-exclamation-triangle-fill fs-5"></i>
     <span>{{ errorMessage }}</span>
   </div>
 
-  <div class="row g-3 mb-4">
+  <div class="row g-4 mb-5">
     <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 border-start border-4 border-success">
+      <div class="card card-kaloes p-4 border-0 shadow-sm rounded-4 h-100 position-relative overflow-hidden" style="border-top: 4px solid #C5A059 !important;">
         <div class="d-flex justify-content-between align-items-start mb-2">
-          <span class="text-muted small text-uppercase fw-semibold">Ventes Nettes (CA Réel)</span>
-          <i class="bi bi-cash-stack fs-4 text-success"></i>
+          <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.08em; font-size: 0.72rem;">Ventes Nettes (CA)</span>
+          <div class="p-2 rounded-3" style="background-color: #F7F1E5; color: #C5A059;">
+            <i class="bi bi-cash-stack fs-5"></i>
+          </div>
         </div>
-        <h3 class="fw-bold mb-0" style="color: #3E2723;">{{ totalVentesNettes | number }} Ar</h3>
+        <h3 class="fw-bold mb-0 tabular-nums fs-4" style="color: #1C130E;">{{ totalVentesNettes | number }} Ar</h3>
         <span class="text-muted small">Hors remises et retours</span>
       </div>
     </div>
 
     <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 border-start border-4 border-primary">
+      <div class="card card-kaloes p-4 border-0 shadow-sm rounded-4 h-100 position-relative overflow-hidden" style="border-top: 4px solid #1C130E !important;">
         <div class="d-flex justify-content-between align-items-start mb-2">
-          <span class="text-muted small text-uppercase fw-semibold">Articles Vendus</span>
-          <i class="bi bi-bag-check fs-4 text-primary"></i>
+          <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.08em; font-size: 0.72rem;">Articles Vendus</span>
+          <div class="p-2 rounded-3" style="background-color: #F8F6F2; color: #1C130E;">
+            <i class="bi bi-bag-check fs-5"></i>
+          </div>
         </div>
-        <h3 class="fw-bold mb-0 text-dark">{{ totalArticlesVendus }} pièces</h3>
+        <h3 class="fw-bold mb-0 tabular-nums fs-4" style="color: #1C130E;">{{ totalArticlesVendus }} pièces</h3>
         <span class="text-muted small">Sorties commerciales validées</span>
       </div>
     </div>
 
     <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 border-start border-4 border-warning">
+      <div class="card card-kaloes p-4 border-0 shadow-sm rounded-4 h-100 position-relative overflow-hidden" style="border-top: 4px solid #B86538 !important;">
         <div class="d-flex justify-content-between align-items-start mb-2">
-          <span class="text-muted small text-uppercase fw-semibold">Sorties Gifting (Dons)</span>
-          <i class="bi bi-gift fs-4 text-warning"></i>
+          <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.08em; font-size: 0.72rem;">Sorties Gifting</span>
+          <div class="p-2 rounded-3" style="background-color: #FDF4F0; color: #B86538;">
+            <i class="bi bi-gift fs-5"></i>
+          </div>
         </div>
-        <h3 class="fw-bold mb-0 text-dark">{{ totalGiftingPieces }} pièces</h3>
-        <span class="text-muted small">Remises 100% Direction / Export</span>
+        <h3 class="fw-bold mb-0 tabular-nums fs-4" style="color: #1C130E;">{{ totalGiftingPieces }} pièces</h3>
+        <span class="text-muted small">Sorties VIP 100% Direction / Export</span>
       </div>
     </div>
 
     <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 border-start border-4 border-danger">
+      <div class="card card-kaloes p-4 border-0 shadow-sm rounded-4 h-100 position-relative overflow-hidden" style="border-top: 4px solid #94A3B8 !important;">
         <div class="d-flex justify-content-between align-items-start mb-2">
-          <span class="text-muted small text-uppercase fw-semibold">Remboursements</span>
-          <i class="bi bi-arrow-counterclockwise fs-4 text-danger"></i>
+          <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.08em; font-size: 0.72rem;">Remboursements</span>
+          <div class="p-2 rounded-3" style="background-color: #F1F5F9; color: #64748B;">
+            <i class="bi bi-arrow-counterclockwise fs-5"></i>
+          </div>
         </div>
-        <h3 class="fw-bold mb-0 text-dark">{{ totalRemboursements | number }} Ar</h3>
+        <h3 class="fw-bold mb-0 tabular-nums fs-4" style="color: #1C130E;">{{ totalRemboursements | number }} Ar</h3>
         <span class="text-muted small">Retours de caisse Showroom</span>
       </div>
     </div>
   </div>
 
-  <div class="card border-0 shadow-sm rounded-4 mb-4 p-3 bg-white">
+  <div class="card card-kaloes border-0 shadow-sm rounded-4 mb-4 p-3">
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
       <div class="input-group" style="max-width: 420px;">
-        <span class="input-group-text bg-light border-0 ps-3"><i class="bi bi-search text-muted"></i></span>
+        <span class="input-group-text bg-light border-0 ps-3 text-muted"><i class="bi bi-search"></i></span>
         <input type="text" class="form-control bg-light border-0 py-2" placeholder="Filtrer par modèle, UGS ou catégorie..." [(ngModel)]="searchTerm" (input)="appliquerFiltres()">
       </div>
 
       <div class="d-flex gap-2">
         <button 
           type="button" 
-          class="btn btn-sm rounded-pill px-3 py-1 fw-semibold"
-          [ngClass]="activeTab === 'TOUT' ? 'btn-dark' : 'btn-light text-muted'"
-          [style.background-color]="activeTab === 'TOUT' ? '#3E2723' : ''"
-          [style.border-color]="activeTab === 'TOUT' ? '#3E2723' : ''"
+          class="btn btn-sm rounded-pill px-3 py-2 fw-semibold"
+          [ngClass]="activeTab === 'TOUT' ? 'text-white shadow-sm' : 'btn-light text-muted'"
+          [style.background-color]="activeTab === 'TOUT' ? '#1C130E' : ''"
           (click)="changerTab('TOUT')">
           Toutes les Sorties ({{ lignesVentes.length }})
         </button>
 
         <button 
           type="button" 
-          class="btn btn-sm rounded-pill px-3 py-1 fw-semibold"
-          [ngClass]="activeTab === 'VENTES' ? 'btn-dark' : 'btn-light text-muted'"
-          [style.background-color]="activeTab === 'VENTES' ? '#3E2723' : ''"
-          [style.border-color]="activeTab === 'VENTES' ? '#3E2723' : ''"
+          class="btn btn-sm rounded-pill px-3 py-2 fw-semibold"
+          [ngClass]="activeTab === 'VENTES' ? 'text-white shadow-sm' : 'btn-light text-muted'"
+          [style.background-color]="activeTab === 'VENTES' ? '#1C130E' : ''"
           (click)="changerTab('VENTES')">
           Ventes Encaissées
         </button>
 
         <button 
           type="button" 
-          class="btn btn-sm rounded-pill px-3 py-1 fw-semibold"
-          [ngClass]="activeTab === 'GIFTING' ? 'btn-dark' : 'btn-light text-muted'"
-          [style.background-color]="activeTab === 'GIFTING' ? '#3E2723' : ''"
-          [style.border-color]="activeTab === 'GIFTING' ? '#3E2723' : ''"
+          class="btn btn-sm rounded-pill px-3 py-2 fw-semibold"
+          [ngClass]="activeTab === 'GIFTING' ? 'text-white shadow-sm' : 'btn-light text-muted'"
+          [style.background-color]="activeTab === 'GIFTING' ? '#1C130E' : ''"
           (click)="changerTab('GIFTING')">
           Gifting Exclusif
         </button>
@@ -116,11 +122,11 @@
     </div>
   </div>
 
-  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+  <div class="card card-kaloes border-0 shadow-sm rounded-4 overflow-hidden">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
-        <thead style="background-color: #F8F5F2;">
-          <tr class="text-muted small text-uppercase" style="letter-spacing: 0.5px;">
+        <thead style="background-color: #F8F6F2; border-bottom: 2px solid #E6E1DA;">
+          <tr class="text-muted small text-uppercase" style="letter-spacing: 0.08em; font-size: 0.75rem;">
             <th class="ps-4 py-3">Modèle / Déclinaison</th>
             <th class="py-3">UGS</th>
             <th class="py-3">Catégorie</th>
@@ -132,33 +138,33 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let row of filteredLignes" class="border-bottom">
+          <tr *ngFor="let row of filteredLignes" class="border-bottom border-kaloes">
             <td class="ps-4 py-3">
-              <span class="fw-bold text-dark">{{ row.article }}</span>
+              <span class="fw-bold" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ row.article }}</span>
             </td>
             <td>
-              <span class="badge bg-light text-dark border font-monospace">{{ row.ugs }}</span>
+              <span class="badge bg-light text-dark border px-2 py-1 font-monospace rounded-3">{{ row.ugs }}</span>
             </td>
             <td>
-              <span class="badge rounded-pill px-3 py-1" style="background-color: #EFEBE9; color: #4E342E;">
+              <span class="badge rounded-pill px-3 py-1 fw-medium" style="background-color: #F7F1E5; color: #C5A059; border: 1px solid #C5A059;">
                 {{ row.categorie }}
               </span>
             </td>
-            <td class="text-center fw-bold">{{ row.articlesVendus }}</td>
+            <td class="text-center fw-bold tabular-nums">{{ row.articlesVendus }}</td>
             <td>
-              <span class="badge rounded-pill px-3 py-1" [ngClass]="row.isGifting ? 'bg-warning text-dark' : 'bg-success text-white'">
-                {{ row.isGifting ? 'Gifting (100% Remise)' : 'Vente Commerciale' }}
+              <span class="badge rounded-pill px-3 py-1 fw-medium" [ngClass]="row.isGifting ? 'bg-warning-subtle text-warning-emphasis border border-warning-subtle' : 'bg-success-subtle text-success border border-success-subtle'">
+                {{ row.isGifting ? 'Gifting VIP (100%)' : 'Vente Commerciale' }}
               </span>
             </td>
-            <td class="text-end text-muted">{{ row.ventesBrutes | number }} Ar</td>
-            <td class="text-end text-danger">-{{ row.reductions | number }} Ar</td>
-            <td class="pe-4 text-end fw-bold" style="color: #3E2723;">
+            <td class="text-end text-muted tabular-nums">{{ row.ventesBrutes | number }} Ar</td>
+            <td class="text-end text-danger tabular-nums">-{{ row.reductions | number }} Ar</td>
+            <td class="pe-4 text-end fw-bold tabular-nums fs-6" style="color: #B86538;">
               {{ row.ventesNettes | number }} Ar
             </td>
           </tr>
           <tr *ngIf="filteredLignes.length === 0">
             <td colspan="8" class="text-center py-5 text-muted">
-              Aucune donnée trouvée.
+              Aucune donnée trouvée dans le rapport sélectionné.
             </td>
           </tr>
         </tbody>

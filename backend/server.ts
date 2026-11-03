@@ -1,15 +1,21 @@
 import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import prisma from './lib/prisma.js';
-import authRoutes from './routes/auth.routes.js';
-import posRoutes from './routes/pos.routes.js';
-import userRoutes from './routes/user.routes.js';
-import customerRoutes from './routes/customer.routes.js';
-import logRoutes, { inMemoryAuditLogs } from './routes/log.routes.js';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import prisma from './src/lib/prisma.js';
+import authRoutes from './src/routes/auth.routes.js';
+import posRoutes from './src/routes/pos.routes.js';
+import userRoutes from './src/routes/user.routes.js';
+import customerRoutes from './src/routes/customer.routes.js';
+import logRoutes, { inMemoryAuditLogs } from './src/routes/log.routes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const distFolder = join(__dirname, '../dist/app/browser');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -49,7 +55,7 @@ app.get('/api/health', async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({ 
       status: 'UP', 
       database: 'CONNECTED', 
-      dbUrl: process.env.DATABASE_URL ? 'CONFIGURED' : 'MISSING',
+      dbUrl: process.env['DATABASE_URL'] ? 'CONFIGURED' : 'MISSING',
       timestamp: new Date() 
     });
   } catch (error) {
@@ -61,6 +67,12 @@ app.get('/api/health', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Serveur Kaloes Backend opérationnel sur http://localhost:${PORT}`);
+app.use(express.static(distFolder, { maxAge: '1y' }));
+
+app.use((req: Request, res: Response) => {
+  res.sendFile(join(distFolder, 'index.html'));
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Kaloes server running on http://0.0.0.0:${PORT}`);
 });

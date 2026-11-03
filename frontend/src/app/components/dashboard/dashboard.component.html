@@ -1,52 +1,213 @@
-<div class="container-fluid px-2 px-md-4">
-  <div class="mb-4">
-    <h3 class="fw-bold mb-1" style="color: #3E2723; font-family: serif; letter-spacing: -0.5px;">Tableau de Bord Exécutif</h3>
-    <p class="text-muted small mb-0">Indicateurs clés d'activité consolidés depuis la base PostgreSQL</p>
-  </div>
+<div class="container-fluid px-0">
 
-  <div class="row g-4 mb-4">
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-success h-100">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="text-muted small text-uppercase fw-bold">Chiffre d'Affaires</span>
-          <i class="bi bi-cash-coin fs-3 text-success"></i>
-        </div>
-        <h3 class="fw-bold mb-0" style="color: #3E2723;">{{ kpis.chiffreAffairesMGA | number }} Ar</h3>
-        <span class="text-muted small">Ventes nettes cumulées</span>
-      </div>
+  <div class="card border-0 rounded-4 p-4 p-md-5 mb-5 shadow-sm text-white position-relative overflow-hidden" 
+       style="background: linear-gradient(135deg, #18110D 0%, #2A1A12 100%); border-bottom: 2px solid #C5A059 !important;">
+    <div class="position-absolute end-0 top-50 translate-middle-y me-4 opacity-10 d-none d-md-block pointer-events-none">
+      <span style="font-size: 14rem; font-family: serif; color: #C5A059;">◆</span>
     </div>
 
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-primary h-100">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="text-muted small text-uppercase fw-bold">Variantes Articles</span>
-          <i class="bi bi-box-seam fs-3 text-primary"></i>
-        </div>
-        <h3 class="fw-bold mb-0 text-dark">{{ kpis.totalArticles }}</h3>
-        <span class="text-muted small">Références en catalogue</span>
+    <div class="row align-items-center g-4 position-relative z-1">
+      <div class="col-12 col-lg-7">
+        <span class="badge rounded-pill px-3 py-1.5 text-uppercase fw-semibold mb-3" style="background-color: #F7F1E5; color: #C5A059; border: 1px solid #C5A059; font-size: 0.72rem; letter-spacing: 0.12em;">
+          ATELIERS & HAUTE MAROQUINERIE KALOÈS
+        </span>
+        <h2 class="display-6 fw-bold mb-2 text-white" style="font-family: 'Playfair Display', serif;">
+          Bonjour, {{ currentUser?.nom || 'Directeur d\'Atelier' }}
+        </h2>
+        <p class="text-white-50 mb-0" style="max-width: 540px; font-size: 0.95rem; line-height: 1.6;">
+          Voici la synthèse des opérations de maroquinerie, transferts inter-boutiques et performances de caisse pour la journée.
+        </p>
       </div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-warning h-100">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="text-muted small text-uppercase fw-bold">Clients Répertoire</span>
-          <i class="bi bi-people fs-3 text-warning"></i>
+      <div class="col-12 col-lg-5 text-lg-end">
+        <div class="d-inline-flex flex-column align-items-lg-end p-3 rounded-4" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.25);">
+          <span class="text-uppercase small fw-bold" style="color: #C5A059; font-size: 0.72rem; letter-spacing: 0.1em;">Ventes Encaissées du Jour</span>
+          <h3 class="fw-bold tabular-nums mb-2 text-white fs-2">
+            {{ kpis.ventesJourMGA | number }} <span class="fs-6 fw-normal text-white-50">Ar</span>
+          </h3>
+          <div class="d-flex align-items-center gap-2">
+            <a routerLink="/caisse" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold text-white d-inline-flex align-items-center gap-2 border-0 shadow-sm" style="background-color: #B86538;">
+              <i class="bi bi-calculator"></i>
+              <span>Ouvrir la Caisse Tactile</span>
+            </a>
+          </div>
         </div>
-        <h3 class="fw-bold mb-0 text-dark">{{ kpis.totalClients }}</h3>
-        <span class="text-muted small">Fichier client actif</span>
-      </div>
-    </div>
-
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-secondary h-100">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="text-muted small text-uppercase fw-bold">Réseau Logistique</span>
-          <i class="bi bi-shop fs-3 text-secondary"></i>
-        </div>
-        <h3 class="fw-bold mb-0 text-dark">{{ kpis.totalMagasins }}</h3>
-        <span class="text-muted small">Boutiques & Dépôts</span>
       </div>
     </div>
   </div>
+
+  <div class="row g-4 mb-5">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card p-4 border-0 shadow-sm h-100 position-relative overflow-hidden" 
+           style="background-color: #FFFFFF; border: 1px solid #E6E1DA; border-radius: 20px; border-top: 4px solid #C5A059 !important;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.08em; font-size: 0.72rem;">Chiffre d'Affaires</span>
+          <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 44px; height: 44px; background-color: #F7F1E5; color: #C5A059;">
+            <i class="bi bi-currency-exchange fs-5"></i>
+          </div>
+        </div>
+        <h3 class="fw-bold mb-1 tabular-nums fs-4" style="color: #1C130E;">{{ kpis.chiffreAffairesMGA | number }} <span class="fs-6 fw-normal text-muted">Ar</span></h3>
+        <div class="d-flex align-items-center justify-content-between mt-3 pt-2 border-top border-light">
+          <span class="small text-muted">Ventes nettes cumulées</span>
+          <span class="badge rounded-pill bg-success-subtle text-success small fw-semibold">+12.4%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card p-4 border-0 shadow-sm h-100 position-relative overflow-hidden" 
+           style="background-color: #FFFFFF; border: 1px solid #E6E1DA; border-radius: 20px; border-top: 4px solid #18110D !important;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.08em; font-size: 0.72rem;">Variantes Articles</span>
+          <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 44px; height: 44px; background-color: #F8F6F2; color: #18110D;">
+            <i class="bi bi-handbag fs-5"></i>
+          </div>
+        </div>
+        <h3 class="fw-bold mb-1 tabular-nums fs-4" style="color: #1C130E;">{{ kpis.totalArticles }} <span class="fs-6 fw-normal text-muted">références</span></h3>
+        <div class="d-flex align-items-center justify-content-between mt-3 pt-2 border-top border-light">
+          <span class="small text-muted">Modèles & Déclinaisons</span>
+          <span class="badge rounded-pill bg-light text-dark border small fw-semibold">Atelier Actif</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card p-4 border-0 shadow-sm h-100 position-relative overflow-hidden" 
+           style="background-color: #FFFFFF; border: 1px solid #E6E1DA; border-radius: 20px; border-top: 4px solid #B86538 !important;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.08em; font-size: 0.72rem;">Clients Répertoire</span>
+          <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 44px; height: 44px; background-color: #FDF4F0; color: #B86538;">
+            <i class="bi bi-people fs-5"></i>
+          </div>
+        </div>
+        <h3 class="fw-bold mb-1 tabular-nums fs-4" style="color: #1C130E;">{{ kpis.totalClients }} <span class="fs-6 fw-normal text-muted">comptes VIP</span></h3>
+        <div class="d-flex align-items-center justify-content-between mt-3 pt-2 border-top border-light">
+          <span class="small text-muted">Fichier CRM Showroom</span>
+          <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis small fw-semibold">+8 ce mois</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card p-4 border-0 shadow-sm h-100 position-relative overflow-hidden" 
+           style="background-color: #FFFFFF; border: 1px solid #E6E1DA; border-radius: 20px; border-top: 4px solid #94A3B8 !important;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.08em; font-size: 0.72rem;">Réseau Logistique</span>
+          <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 44px; height: 44px; background-color: #F1F5F9; color: #475569;">
+            <i class="bi bi-shop fs-5"></i>
+          </div>
+        </div>
+        <h3 class="fw-bold mb-1 tabular-nums fs-4" style="color: #1C130E;">{{ kpis.totalMagasins }} <span class="fs-6 fw-normal text-muted">ateliers & dépôts</span></h3>
+        <div class="d-flex align-items-center justify-content-between mt-3 pt-2 border-top border-light">
+          <span class="small text-muted">Showroom, Dépôt, Analakely</span>
+          <span class="badge rounded-pill bg-success-subtle text-success small fw-semibold">Connectés</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-xl-7">
+      <div class="card border-0 shadow-sm p-4 h-100" style="background-color: #FFFFFF; border: 1px solid #E6E1DA; border-radius: 20px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h5 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif; color: #1C130E;">Flux Récents des Transferts de Stock</h5>
+            <span class="text-muted small">Traçabilité des envois et réceptions inter-boutiques</span>
+          </div>
+          <a routerLink="/transfert" class="btn btn-sm btn-outline-dark rounded-pill px-3 fw-medium" style="border-color: #E6E1DA; font-size: 0.8rem;">
+            Nouveau transfert
+          </a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead style="background-color: #F8F6F2;">
+              <tr class="text-muted small text-uppercase" style="letter-spacing: 0.08em; font-size: 0.72rem;">
+                <th class="ps-3 py-3">Réf. Bon</th>
+                <th class="py-3">Article</th>
+                <th class="py-3">Acheminement</th>
+                <th class="py-3 text-center">Quantité</th>
+                <th class="py-3">Statut</th>
+                <th class="pe-3 py-3 text-end">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of recentTransfers" class="border-bottom" style="border-color: #F1EFEA;">
+                <td class="ps-3 py-3 font-monospace small fw-semibold" style="color: #1C130E;">{{ t.ref }}</td>
+                <td class="py-3 fw-medium" style="color: #1C130E;">{{ t.article }}</td>
+                <td class="py-3 small text-muted">
+                  <div class="d-flex align-items-center gap-1">
+                    <span>{{ t.source }}</span>
+                    <i class="bi bi-arrow-right text-muted" style="font-size: 0.7rem;"></i>
+                    <strong class="text-dark">{{ t.destination }}</strong>
+                  </div>
+                </td>
+                <td class="py-3 text-center fw-bold tabular-nums">{{ t.qte }} u.</td>
+                <td class="py-3">
+                  <span class="badge rounded-pill px-2.5 py-1 fw-medium" 
+                        [ngClass]="{
+                          'bg-success-subtle text-success border border-success-subtle': t.statut === 'Réceptionné',
+                          'bg-warning-subtle text-warning-emphasis border border-warning-subtle': t.statut === 'En transit',
+                          'bg-info-subtle text-info border border-info-subtle': t.statut === 'Expédié'
+                        }"
+                        style="font-size: 0.72rem;">
+                    {{ t.statut }}
+                  </span>
+                </td>
+                <td class="pe-3 py-3 text-end small text-muted">{{ t.date }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-5">
+      <div class="card border-0 shadow-sm p-4 h-100" style="background-color: #FFFFFF; border: 1px solid #E6E1DA; border-radius: 20px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h5 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif; color: #1C130E;">Top Modèles & Niveaux de Stock</h5>
+            <span class="text-muted small">Articles phares de la collection maroquinerie</span>
+          </div>
+          <a routerLink="/articles" class="btn btn-sm btn-outline-dark rounded-pill px-3 fw-medium" style="border-color: #E6E1DA; font-size: 0.8rem;">
+            Catalogue
+          </a>
+        </div>
+
+        <div class="d-flex flex-column gap-4">
+          <div *ngFor="let m of topModels" class="p-3 rounded-4" style="background-color: #F8F6F2; border: 1px solid #E6E1DA;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <span class="fw-bold d-block" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ m.nom }}</span>
+                <span class="text-muted small">{{ m.couleur }} • UGS: {{ m.ugs }}</span>
+              </div>
+              <div class="text-end">
+                <span class="fw-bold tabular-nums d-block fs-6" style="color: #B86538;">{{ m.ventes }} ventes</span>
+                <span class="badge rounded-pill bg-white text-muted border px-2 py-0.5" style="font-size: 0.68rem;">
+                  Reste : {{ m.stockRestant }} ex.
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 0.75rem;">
+                <span>Disponibilité showroom</span>
+                <span [ngClass]="m.stockRestant <= m.seuil ? 'text-danger fw-bold' : 'text-success fw-bold'">
+                  {{ m.stockRestant <= m.seuil ? 'Alerte réappro' : 'Stock adéquat' }}
+                </span>
+              </div>
+              <div class="progress rounded-pill" style="height: 6px; background-color: #E6E1DA;">
+                <div class="progress-bar rounded-pill" 
+                     [style.width.%]="m.pourcentageStock"
+                     [style.background-color]="m.stockRestant <= m.seuil ? '#B86538' : '#C5A059'">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>

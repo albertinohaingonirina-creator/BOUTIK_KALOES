@@ -208,6 +208,10 @@ export class ApiService {
     );
   }
 
+  getMovements(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/pos/movements`);
+  }
+
   saveInventaire(inventaireData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/pos/inventory`, inventaireData).pipe(
       tap(() => {
@@ -241,5 +245,24 @@ export class ApiService {
 
   getLogs(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/logs`);
+  }
+
+  getProfile(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/profile`);
+  }
+
+  updateProfile(profileData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/users/profile`, profileData).pipe(
+      tap((res) => {
+        if (res.user) {
+          const current = this.getCurrentUser() || {};
+          this.setStorageItem('kaloes_user', JSON.stringify({ ...current, ...res.user }));
+        }
+      })
+    );
+  }
+
+  changePassword(passwords: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/users/change-password`, passwords);
   }
 }

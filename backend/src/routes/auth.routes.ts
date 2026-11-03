@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma.js';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'kaloes_secret_key_production_2026_secured';
+const JWT_SECRET = process.env['JWT_SECRET'] || 'kaloes_secret_key_production_2026_secured';
 
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   try {
@@ -41,6 +41,9 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
       user: {
         id: user.id,
         nom: user.nom,
+        email: user.email,
+        telephone: user.telephone,
+        avatar: user.avatar,
         role: user.role,
         magasin: user.magasin
       }

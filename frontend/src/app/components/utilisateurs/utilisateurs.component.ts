@@ -60,7 +60,9 @@ export class UtilisateursComponent implements OnInit {
       next: (stores: any[]) => {
         this.magasins = stores || [];
       },
-      error: () => {}
+      error: (err) => {
+        console.error(err);
+      }
     });
   }
 

@@ -5,11 +5,12 @@ import { ApiService } from './services/api.service';
 import { LoadingService } from './services/loading.service';
 import { ToastService } from './services/toast.service';
 import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.component';
+import { ToastComponent } from './components/ui/toast/toast.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, ConfirmModalComponent],
+  imports: [CommonModule, RouterModule, ConfirmModalComponent, ToastComponent],
   templateUrl: './app.component.html'
 })
 export class AppComponent {

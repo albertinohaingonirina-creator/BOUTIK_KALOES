@@ -1,0 +1,34 @@
+<div class="d-flex min-vh-100 position-relative" style="background-color: #F8F6F2;">
+
+  <div class="d-none d-lg-block position-sticky top-0 h-100vh" style="height: 100vh;">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div *ngIf="layoutService.isMobileOpen()" 
+       class="position-fixed top-0 start-0 w-100 h-100 d-lg-none" 
+       style="background-color: rgba(24, 17, 13, 0.6); backdrop-filter: blur(4px); z-index: 1045;"
+       (click)="layoutService.closeMobileDrawer()">
+  </div>
+
+  <div *ngIf="layoutService.isMobileOpen()" 
+       class="position-fixed top-0 start-0 h-100 d-lg-none shadow-2xl" 
+       style="z-index: 1050; width: 280px;">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="d-flex flex-column flex-grow-1 overflow-x-hidden min-vh-100">
+    <app-header></app-header>
+
+    <main class="flex-grow-1 px-3 px-md-4 px-xl-5 py-4">
+      <router-outlet></router-outlet>
+    </main>
+
+    <footer class="py-3 px-4 border-top text-center text-muted small" style="border-color: #E6E1DA !important; background-color: #FFFFFF; font-size: 0.75rem;">
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+        <span style="letter-spacing: 0.05em;">© 2026 Maison Kaloès Madagascar • Haute Maroquinerie Sartoriale</span>
+        <span class="text-uppercase" style="color: #C5A059; font-size: 0.7rem; letter-spacing: 0.1em;">ERP & Caisse Tactile Prestige</span>
+      </div>
+    </footer>
+  </div>
+
+</div>

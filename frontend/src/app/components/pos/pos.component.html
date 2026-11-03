@@ -1,28 +1,28 @@
 <div class="container-fluid px-0">
-  <div class="row g-3">
+  <div class="row g-4">
     <div class="col-12 col-lg-8">
-      <div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-3">
+      <div class="card card-kaloes p-3 mb-4 border-0 shadow-sm rounded-4">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
           <div class="input-group" style="max-width: 380px;">
-            <span class="input-group-text bg-light border-0 ps-3"><i class="bi bi-search text-muted"></i></span>
+            <span class="input-group-text bg-light border-0 ps-3 text-muted"><i class="bi bi-search"></i></span>
             <input type="text" class="form-control bg-light border-0 py-2" placeholder="Rechercher article, UGS..." [(ngModel)]="searchTerm">
           </div>
 
           <div class="d-flex flex-wrap gap-2">
             <button 
               type="button" 
-              class="btn btn-sm rounded-pill px-3 py-1 fw-semibold"
-              [ngClass]="selectedCategory === 'TOUT' ? 'btn-dark' : 'btn-light text-muted'"
-              [style.background-color]="selectedCategory === 'TOUT' ? '#3E2723' : ''"
+              class="btn btn-sm rounded-pill px-3 py-2 fw-semibold"
+              [ngClass]="selectedCategory === 'TOUT' ? 'text-white shadow-sm' : 'btn-light text-muted'"
+              [style.background-color]="selectedCategory === 'TOUT' ? '#1C130E' : ''"
               (click)="selectedCategory = 'TOUT'">
               Tous les articles
             </button>
             <button 
               *ngFor="let c of categories" 
               type="button" 
-              class="btn btn-sm rounded-pill px-3 py-1 fw-semibold"
-              [ngClass]="selectedCategory === c.nom ? 'btn-dark' : 'btn-light text-muted'"
-              [style.background-color]="selectedCategory === c.nom ? '#3E2723' : ''"
+              class="btn btn-sm rounded-pill px-3 py-2 fw-semibold"
+              [ngClass]="selectedCategory === c.nom ? 'text-white shadow-sm' : 'btn-light text-muted'"
+              [style.background-color]="selectedCategory === c.nom ? '#1C130E' : ''"
               (click)="selectedCategory = c.nom">
               {{ c.nom }}
             </button>
@@ -32,16 +32,26 @@
 
       <div class="row g-3">
         <div class="col-12 col-sm-6 col-xl-4" *ngFor="let prod of filteredProducts">
-          <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 cursor-pointer hover-card" (click)="openVariantSelection(prod)">
+          <div class="card card-kaloes card-kaloes-hover p-3 h-100 cursor-pointer border-0 shadow-sm rounded-4 position-relative overflow-hidden" 
+               (click)="openVariantSelection(prod)">
             <div class="d-flex align-items-center gap-3">
-              <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px; background-color: #EFEBE9; color: #4E342E;">
+              <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm" style="width: 58px; height: 58px; background-color: #F7F1E5; color: #C5A059;">
                 <i class="bi bi-handbag fs-3"></i>
               </div>
               <div class="flex-grow-1 overflow-hidden">
-                <h6 class="fw-bold text-dark mb-0 text-truncate">{{ prod.nom }}</h6>
-                <span class="text-muted small">{{ (prod.variantes || []).length }} variantes</span>
+                <h6 class="fw-bold mb-1 text-truncate" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ prod.nom }}</h6>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="text-muted small">{{ (prod.variantes || []).length }} déclinaisons</span>
+                </div>
+                <div class="d-flex align-items-center gap-1 mt-1">
+                  <span *ngFor="let v of (prod.variantes || []).slice(0, 4)" 
+                        class="swatch-cuir" 
+                        [style.background-color]="getLeatherColor(v.couleur)" 
+                        [title]="v.couleur + ' (' + v.taille + ')'">
+                  </span>
+                  <span *ngIf="(prod.variantes || []).length > 4" class="text-muted" style="font-size: 0.7rem;">+{{ (prod.variantes || []).length - 4 }}</span>
+                </div>
               </div>
-              <i class="bi bi-chevron-right text-muted"></i>
             </div>
           </div>
         </div>
@@ -49,83 +59,90 @@
     </div>
 
     <div class="col-12 col-lg-4">
-      <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden d-flex flex-column" style="min-height: calc(100vh - 130px);">
-        <div class="p-3 text-white d-flex justify-content-between align-items-center" style="background-color: #3E2723;">
+      <div class="card card-kaloes border-0 shadow-sm rounded-4 overflow-hidden d-flex flex-column" style="min-height: calc(100vh - 120px);">
+        <div class="p-4 text-white d-flex justify-content-between align-items-center" style="background-color: #1C130E; border-bottom: 2px solid #C5A059;">
           <div>
-            <h6 class="fw-bold mb-0">Ticket de Caisse</h6>
-            <span class="small text-white-50">Vendeur: {{ currentUser?.nom }}</span>
+            <span class="text-uppercase small" style="color: #C5A059; letter-spacing: 0.1em; font-size: 0.7rem;">Facturation Atelier</span>
+            <h5 class="modal-title fw-bold mb-0" style="font-family: 'Playfair Display', serif;">Ticket de Caisse</h5>
           </div>
-          <span class="badge rounded-pill bg-light text-dark fw-bold px-3 py-2">
+          <span class="badge rounded-pill fw-bold px-3 py-2 tabular-nums" style="background-color: #C5A059; color: #1C130E;">
             {{ cart.length }} ref.
           </span>
         </div>
 
         <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
-          <div *ngIf="!selectedCustomer" class="d-flex align-items-center gap-2 cursor-pointer" (click)="openCustomerModal()">
-            <i class="bi bi-person-plus fs-5 text-secondary"></i>
-            <span class="small fw-semibold text-dark">Ajouter un client</span>
+          <div *ngIf="!selectedCustomer" class="d-flex align-items-center gap-2 cursor-pointer py-1" (click)="openCustomerModal()">
+            <div class="p-2 rounded-circle bg-white text-muted shadow-sm">
+              <i class="bi bi-person-plus" style="color: #C5A059;"></i>
+            </div>
+            <span class="small fw-semibold" style="color: #1C130E;">Rattacher un client VIP</span>
           </div>
           <div *ngIf="selectedCustomer" class="d-flex align-items-center justify-content-between w-100">
             <div>
-              <span class="fw-bold text-dark small d-block">{{ selectedCustomer.nom }}</span>
-              <span class="text-muted small">{{ selectedCustomer.telephone || 'Aucun numéro' }}</span>
+              <span class="fw-bold small d-block" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ selectedCustomer.nom }}</span>
+              <span class="text-muted small font-monospace">{{ selectedCustomer.telephone || 'Compte sans téléphone' }}</span>
             </div>
-            <button class="btn btn-sm btn-link text-danger p-0" (click)="removeCustomer()">
-              <i class="bi bi-x-circle"></i>
+            <button class="btn btn-sm btn-link text-danger p-0 shadow-none" (click)="removeCustomer()">
+              <i class="bi bi-x-circle fs-5"></i>
             </button>
           </div>
         </div>
 
         <div class="p-3 flex-grow-1 overflow-auto" style="max-height: 380px;">
-          <div *ngFor="let item of cart; let i = index" class="d-flex align-items-center justify-content-between py-2 border-bottom">
+          <div *ngFor="let item of cart; let i = index" class="d-flex align-items-center justify-content-between py-3 border-bottom border-kaloes">
             <div class="flex-grow-1 pe-2">
-              <div class="fw-bold text-dark small">{{ item.nomProduit }}</div>
-              <span class="text-muted small">{{ item.couleur }} / {{ item.taille }}</span>
-              <div class="fw-semibold small" style="color: #3E2723;">{{ item.prixUnitaire | number }} Ar</div>
+              <div class="fw-bold small" style="color: #1C130E;">{{ item.nomProduit }}</div>
+              <div class="d-flex align-items-center gap-2 my-1">
+                <span class="swatch-cuir" [style.background-color]="getLeatherColor(item.couleur)"></span>
+                <span class="text-muted small">{{ item.couleur }}</span>
+                <span class="badge rounded-pill bg-light text-dark border px-2 py-0.5" style="font-size: 0.7rem;">Taille {{ item.taille }}</span>
+              </div>
+              <div class="fw-semibold small tabular-nums" style="color: #B86538;">{{ item.prixUnitaire | number }} Ar</div>
             </div>
 
             <div class="d-flex align-items-center gap-2">
-              <button class="btn btn-sm btn-light rounded-circle px-2 py-0 border" (click)="updateItemQuantity(i, -1)">-</button>
-              <span class="fw-bold small">{{ item.quantite }}</span>
-              <button class="btn btn-sm btn-light rounded-circle px-2 py-0 border" (click)="updateItemQuantity(i, 1)">+</button>
-              <button class="btn btn-sm text-danger border-0 ms-2" (click)="removeItem(i)"><i class="bi bi-trash"></i></button>
+              <button class="btn btn-sm btn-light rounded-circle px-2 py-0 border border-kaloes" (click)="updateItemQuantity(i, -1)">-</button>
+              <span class="fw-bold small tabular-nums px-1">{{ item.quantite }}</span>
+              <button class="btn btn-sm btn-light rounded-circle px-2 py-0 border border-kaloes" (click)="updateItemQuantity(i, 1)">+</button>
+              <button class="btn btn-sm text-danger border-0 ms-1 shadow-none" (click)="removeItem(i)"><i class="bi bi-trash"></i></button>
             </div>
           </div>
 
           <div *ngIf="cart.length === 0" class="text-center py-5 text-muted">
-            <i class="bi bi-receipt fs-1 d-block mb-2 text-muted"></i>
-            Ticket vide. Sélectionnez un article.
+            <i class="bi bi-receipt fs-1 d-block mb-2 opacity-50" style="color: #C5A059;"></i>
+            <p class="small mb-0">Le ticket de caisse est vide. Veuillez sélectionner un article dans le catalogue.</p>
           </div>
         </div>
 
-        <div class="p-3 bg-light border-top">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" (click)="openDiscountModal()">
-              <i class="bi bi-tag me-1"></i> Remises ({{ appliedDiscounts.length }})
+        <div class="p-4 bg-white border-top border-kaloes">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <button class="btn btn-sm rounded-pill px-3 py-2 fw-semibold" style="background-color: #F7F1E5; color: #C5A059; border: 1px solid #C5A059;" (click)="openDiscountModal()">
+              <i class="bi bi-tag me-1"></i> Remises & Gifting ({{ appliedDiscounts.length }})
             </button>
-            <span *ngIf="isGiftingSale()" class="badge bg-warning text-dark fw-bold">GIFTING 100%</span>
+            <span *ngIf="isGiftingSale()" class="badge text-dark fw-bold px-3 py-2" style="background-color: #C5A059;">GIFTING 100%</span>
           </div>
 
           <div class="d-flex justify-content-between small text-muted mb-1">
-            <span>Sous-Total</span>
-            <span>{{ getSubtotal() | number }} Ar</span>
+            <span>Sous-Total Brut</span>
+            <span class="tabular-nums">{{ getSubtotal() | number }} Ar</span>
           </div>
           <div class="d-flex justify-content-between small text-danger mb-2" *ngIf="getDiscountTotal() > 0">
-            <span>Remises</span>
-            <span>-{{ getDiscountTotal() | number }} Ar</span>
+            <span>Remises accordées</span>
+            <span class="tabular-nums">-{{ getDiscountTotal() | number }} Ar</span>
           </div>
-          <div class="d-flex justify-content-between align-items-center fs-5 fw-bold text-dark pt-2 border-top">
-            <span>Total Net</span>
-            <span style="color: #3E2723;">{{ getTotalNet() | number }} Ar</span>
+          <div class="d-flex justify-content-between align-items-center fs-5 fw-bold pt-2 border-top mb-3" style="color: #1C130E;">
+            <span style="font-family: 'Playfair Display', serif;">Total Net</span>
+            <span class="tabular-nums fs-4" style="color: #1C130E;">{{ getTotalNet() | number }} Ar</span>
           </div>
 
           <button 
             type="button" 
-            class="btn btn-success w-100 rounded-pill py-3 fw-bold fs-6 mt-3 shadow-sm d-flex justify-content-between align-items-center px-4"
+            class="btn w-100 rounded-pill py-3 fw-bold fs-6 shadow-sm d-flex justify-content-between align-items-center px-4"
+            style="background-color: #B86538; color: #FFFFFF; border: none; transition: background-color 0.2s;"
             [disabled]="cart.length === 0 || isLoading"
             (click)="openPaymentModal()">
-            <span>ENCAISSER</span>
-            <span>{{ getTotalNet() | number }} Ar</span>
+            <span class="tracking-wide">ENCAISSER</span>
+            <span class="tabular-nums">{{ getTotalNet() | number }} Ar</span>
           </button>
         </div>
       </div>
@@ -133,31 +150,39 @@
   </div>
 </div>
 
-<div class="modal-backdrop fade show" *ngIf="isVariantModalOpen" (click)="closeVariantModal()" style="background-color: rgba(62, 39, 35, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
+<div class="modal-backdrop fade show" *ngIf="isVariantModalOpen" (click)="closeVariantModal()" style="background-color: rgba(28, 19, 14, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
 <div class="modal d-block fade show" *ngIf="isVariantModalOpen" tabindex="-1" style="z-index: 1050;">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-      <div class="modal-header text-white px-4 py-3" style="background-color: #3E2723;">
+      <div class="modal-header text-white px-4 py-3" style="background-color: #1C130E; border-bottom: 2px solid #C5A059;">
         <div>
-          <h5 class="modal-title fw-bold mb-0">{{ selectedProductForVariants?.nom }}</h5>
-          <span class="small text-white-50">Sélectionnez la déclinaison</span>
+          <span class="text-uppercase small" style="color: #C5A059; font-size: 0.7rem; letter-spacing: 0.1em;">Sélection des Pastilles de Cuir</span>
+          <h5 class="modal-title fw-bold mb-0" style="font-family: 'Playfair Display', serif;">{{ selectedProductForVariants?.nom }}</h5>
         </div>
-        <button type="button" class="btn-close btn-close-white" (click)="closeVariantModal()"></button>
+        <button type="button" class="btn-close btn-close-white shadow-none" aria-label="Fermer" (click)="closeVariantModal()"></button>
       </div>
-      <div class="modal-body p-3 bg-white" style="max-height: 400px; overflow-y: auto;">
-        <div class="list-group list-group-flush">
+      <div class="modal-body p-4 bg-white" style="max-height: 420px; overflow-y: auto;">
+        <div class="list-group list-group-flush gap-3">
           <button 
             *ngFor="let v of selectedProductForVariants?.variantes" 
             type="button" 
-            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 rounded-3 mb-2 border"
+            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3 rounded-4 border border-kaloes shadow-sm card-kaloes-hover"
             (click)="addVariantToCart(v)">
-            <div>
-              <span class="fw-bold text-dark d-block">{{ v.couleur }} / {{ v.taille }}</span>
-              <span class="text-muted small font-monospace">UGS: {{ v.ugs }}</span>
+            <div class="d-flex align-items-center gap-3">
+              <span class="swatch-cuir" [style.background-color]="getLeatherColor(v.couleur)" style="width: 32px; height: 32px;"></span>
+              <div>
+                <span class="fw-bold d-block" style="color: #1C130E;">Cuir {{ v.couleur }}</span>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                  <span class="badge rounded-pill px-2.5 py-1 fw-semibold text-dark border" style="background-color: #F8F6F2; border-color: #E6E1DA; font-size: 0.75rem;">
+                    Taille {{ v.taille }}
+                  </span>
+                  <span class="text-muted small font-monospace">UGS : {{ v.ugs }}</span>
+                </div>
+              </div>
             </div>
             <div class="text-end">
-              <span class="fw-bold d-block" style="color: #3E2723;">{{ v.prixVente | number }} Ar</span>
-              <span class="badge bg-success-subtle text-success small">En stock</span>
+              <span class="fw-bold d-block tabular-nums fs-6" style="color: #B86538;">{{ v.prixVente | number }} Ar</span>
+              <span class="badge rounded-pill bg-success-subtle text-success small">En atelier</span>
             </div>
           </button>
         </div>
@@ -166,24 +191,24 @@
   </div>
 </div>
 
-<div class="modal-backdrop fade show" *ngIf="isCustomerModalOpen" (click)="isCustomerModalOpen = false" style="background-color: rgba(62, 39, 35, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
+<div class="modal-backdrop fade show" *ngIf="isCustomerModalOpen" (click)="isCustomerModalOpen = false" style="background-color: rgba(28, 19, 14, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
 <div class="modal d-block fade show" *ngIf="isCustomerModalOpen" tabindex="-1" style="z-index: 1050;">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 rounded-4 shadow-lg">
-      <div class="modal-header border-0 px-4 pt-4 pb-2">
-        <h5 class="modal-title fw-bold text-dark">Sélectionner un Client</h5>
-        <button type="button" class="btn-close" (click)="isCustomerModalOpen = false"></button>
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+      <div class="modal-header border-0 px-4 pt-4 pb-2" style="background-color: #1C130E; color: #FFFFFF;">
+        <h5 class="modal-title fw-bold" style="font-family: 'Playfair Display', serif; color: #FFFFFF;">Fichier Client VIP</h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" aria-label="Fermer" (click)="isCustomerModalOpen = false"></button>
       </div>
-      <div class="modal-body px-4">
+      <div class="modal-body p-4 bg-white">
         <input type="text" class="form-control rounded-3 bg-light border-0 py-2 mb-3" placeholder="Rechercher nom, téléphone..." [(ngModel)]="customerSearchTerm">
         <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
           <button 
             *ngFor="let c of filteredCustomers" 
             type="button" 
-            class="list-group-item list-group-item-action py-2 rounded-2"
+            class="list-group-item list-group-item-action py-3 rounded-3 mb-2 border border-kaloes"
             (click)="selectCustomer(c)">
-            <div class="fw-bold text-dark">{{ c.nom }}</div>
-            <span class="text-muted small">{{ c.telephone || 'Sans téléphone' }}</span>
+            <div class="fw-bold" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ c.nom }}</div>
+            <span class="text-muted small font-monospace">{{ c.telephone || 'Sans téléphone' }}</span>
           </button>
         </div>
       </div>
@@ -191,21 +216,21 @@
   </div>
 </div>
 
-<div class="modal-backdrop fade show" *ngIf="isDiscountModalOpen" (click)="isDiscountModalOpen = false" style="background-color: rgba(62, 39, 35, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
+<div class="modal-backdrop fade show" *ngIf="isDiscountModalOpen" (click)="isDiscountModalOpen = false" style="background-color: rgba(28, 19, 14, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
 <div class="modal d-block fade show" *ngIf="isDiscountModalOpen" tabindex="-1" style="z-index: 1050;">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 rounded-4 shadow-lg">
-      <div class="modal-header border-0 px-4 pt-4 pb-2">
-        <h5 class="modal-title fw-bold text-dark">Règles de Remises & Gifting</h5>
-        <button type="button" class="btn-close" (click)="isDiscountModalOpen = false"></button>
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+      <div class="modal-header border-0 px-4 pt-4 pb-2" style="background-color: #1C130E; color: #FFFFFF;">
+        <h5 class="modal-title fw-bold" style="font-family: 'Playfair Display', serif; color: #FFFFFF;">Règles de Remises & Gifting</h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" aria-label="Fermer" (click)="isDiscountModalOpen = false"></button>
       </div>
-      <div class="modal-body px-4 pb-4">
+      <div class="modal-body p-4 bg-white">
         <div class="list-group list-group-flush">
-          <div *ngFor="let d of discounts" class="d-flex justify-content-between align-items-center py-3 border-bottom">
+          <div *ngFor="let d of discounts" class="d-flex justify-content-between align-items-center py-3 border-bottom border-kaloes">
             <div>
-              <span class="fw-bold text-dark d-block">{{ d.nom }}</span>
-              <span class="small" [ngClass]="d.isGifting ? 'text-warning fw-bold' : 'text-muted'">
-                {{ d.isGifting ? 'Sortie Gifting (100%)' : d.pourcentage + '%' }}
+              <span class="fw-bold d-block" style="color: #1C130E;">{{ d.nom }}</span>
+              <span class="small fw-semibold" [ngClass]="d.isGifting ? 'text-warning' : 'text-muted'">
+                {{ d.isGifting ? 'Sortie Gifting VIP (100%)' : d.pourcentage + '%' }}
               </span>
             </div>
             <div class="form-check form-switch fs-4">
@@ -213,22 +238,22 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-dark w-100 rounded-pill py-2 mt-3" style="background-color: #3E2723;" (click)="isDiscountModalOpen = false">Valider</button>
+        <button class="btn w-100 rounded-pill py-3 fw-bold mt-4 shadow-sm" style="background-color: #B86538; color: #FFFFFF; border: none;" (click)="isDiscountModalOpen = false">Valider les Remises</button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal-backdrop fade show" *ngIf="isPaymentModalOpen" (click)="closePaymentModal()" style="background-color: rgba(62, 39, 35, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
+<div class="modal-backdrop fade show" *ngIf="isPaymentModalOpen" (click)="closePaymentModal()" style="background-color: rgba(28, 19, 14, 0.5); backdrop-filter: blur(4px); z-index: 1040;"></div>
 <div class="modal d-block fade show" *ngIf="isPaymentModalOpen" tabindex="-1" style="z-index: 1050;">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-      <div class="modal-header text-white px-4 py-3" style="background-color: #3E2723;">
+      <div class="modal-header text-white px-4 py-3" style="background-color: #1C130E; border-bottom: 2px solid #C5A059;">
         <div>
-          <h5 class="modal-title fw-bold">Encaissement du Ticket</h5>
-          <span class="small text-white-50">Montant net à percevoir : {{ getTotalNet() | number }} Ar</span>
+          <span class="text-uppercase small" style="color: #C5A059; font-size: 0.7rem; letter-spacing: 0.1em;">Règlement</span>
+          <h5 class="modal-title fw-bold" style="font-family: 'Playfair Display', serif;">Encaissement du Ticket</h5>
         </div>
-        <button type="button" class="btn-close btn-close-white" (click)="closePaymentModal()"></button>
+        <button type="button" class="btn-close btn-close-white shadow-none" aria-label="Fermer" (click)="closePaymentModal()"></button>
       </div>
 
       <div class="modal-body p-4 bg-white">
@@ -236,136 +261,127 @@
           <div class="col-6 col-md-3">
             <button 
               type="button" 
-              class="btn w-100 py-3 rounded-4 border d-flex flex-column align-items-center gap-2"
-              [ngClass]="paymentMethod === 'ESPECES' ? 'btn-dark' : 'btn-light'"
-              [style.background-color]="paymentMethod === 'ESPECES' ? '#3E2723' : ''"
+              class="btn w-100 py-3 rounded-4 border border-kaloes d-flex flex-column align-items-center gap-2 shadow-sm"
+              [style.background-color]="paymentMethod === 'ESPECES' ? '#1C130E' : '#FFFFFF'"
+              [style.color]="paymentMethod === 'ESPECES' ? '#FFFFFF' : '#1C130E'"
               (click)="paymentMethod = 'ESPECES'">
-              <i class="bi bi-cash-stack fs-3"></i>
+              <i class="bi bi-cash-stack fs-3 text-warning"></i>
               <span class="fw-bold small">ESPÈCES</span>
             </button>
           </div>
           <div class="col-6 col-md-3">
             <button 
               type="button" 
-              class="btn w-100 py-3 rounded-4 border d-flex flex-column align-items-center gap-2"
-              [ngClass]="paymentMethod === 'MVOLA' ? 'btn-dark' : 'btn-light'"
-              [style.background-color]="paymentMethod === 'MVOLA' ? '#007A33' : ''"
+              class="btn w-100 py-3 rounded-4 border border-kaloes d-flex flex-column align-items-center gap-2 shadow-sm"
+              [style.background-color]="paymentMethod === 'MVOLA' ? '#1C130E' : '#FFFFFF'"
+              [style.color]="paymentMethod === 'MVOLA' ? '#FFFFFF' : '#1C130E'"
               (click)="paymentMethod = 'MVOLA'">
-              <i class="bi bi-phone fs-3"></i>
+              <i class="bi bi-phone fs-3 text-success"></i>
               <span class="fw-bold small">MVOLA</span>
             </button>
           </div>
           <div class="col-6 col-md-3">
             <button 
               type="button" 
-              class="btn w-100 py-3 rounded-4 border d-flex flex-column align-items-center gap-2"
-              [ngClass]="paymentMethod === 'CARTE_BANCAIRE' ? 'btn-dark' : 'btn-light'"
-              [style.background-color]="paymentMethod === 'CARTE_BANCAIRE' ? '#3E2723' : ''"
+              class="btn w-100 py-3 rounded-4 border border-kaloes d-flex flex-column align-items-center gap-2 shadow-sm"
+              [style.background-color]="paymentMethod === 'CARTE_BANCAIRE' ? '#1C130E' : '#FFFFFF'"
+              [style.color]="paymentMethod === 'CARTE_BANCAIRE' ? '#FFFFFF' : '#1C130E'"
               (click)="paymentMethod = 'CARTE_BANCAIRE'">
-              <i class="bi bi-credit-card fs-3"></i>
-              <span class="fw-bold small">CARTE (CB)</span>
+              <i class="bi bi-credit-card fs-3 text-info"></i>
+              <span class="fw-bold small">CARTE BANCAIRE</span>
             </button>
           </div>
           <div class="col-6 col-md-3">
             <button 
               type="button" 
-              class="btn w-100 py-3 rounded-4 border d-flex flex-column align-items-center gap-2"
-              [ngClass]="paymentMethod === 'VIREMENT' ? 'btn-dark' : 'btn-light'"
-              [style.background-color]="paymentMethod === 'VIREMENT' ? '#3E2723' : ''"
+              class="btn w-100 py-3 rounded-4 border border-kaloes d-flex flex-column align-items-center gap-2 shadow-sm"
+              [style.background-color]="paymentMethod === 'VIREMENT' ? '#1C130E' : '#FFFFFF'"
+              [style.color]="paymentMethod === 'VIREMENT' ? '#FFFFFF' : '#1C130E'"
               (click)="paymentMethod = 'VIREMENT'">
-              <i class="bi bi-bank fs-3"></i>
+              <i class="bi bi-bank fs-3 text-primary"></i>
               <span class="fw-bold small">VIREMENT</span>
             </button>
           </div>
         </div>
 
-        <div class="row g-3">
-          <div class="col-12 col-md-6" *ngIf="paymentMethod === 'ESPECES'">
-            <label class="form-label small fw-semibold text-muted">Montant Espèces Reçu (Ar)</label>
-            <input type="number" class="form-control form-control-lg rounded-3 fw-bold" [(ngModel)]="amountGiven">
-            <div class="mt-2 small text-success fw-bold" *ngIf="getChangeAmount() > 0">
-              Monnaie à rendre : {{ getChangeAmount() | number }} Ar
+        <div class="mb-4 p-4 rounded-4 bg-light border border-kaloes">
+          <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-muted">Montant Perçu (Ar)</label>
+              <input type="number" class="form-control form-control-lg rounded-3 fw-bold tabular-nums" [(ngModel)]="montantRecu" placeholder="0">
+            </div>
+            <div class="col-md-6 text-md-end">
+              <span class="text-muted small d-block">Monnaie à restituer</span>
+              <h3 class="fw-bold tabular-nums mb-0 text-success">{{ getMonnaieARendre() | number }} Ar</h3>
             </div>
           </div>
-
-          <div class="col-12 col-md-6" *ngIf="paymentMethod === 'MVOLA'">
-            <label class="form-label small fw-semibold text-muted">Référence Transaction MVola / Telma</label>
-            <input type="text" class="form-control form-control-lg rounded-3 font-monospace" placeholder="ex: MP261029.0914.A001" [(ngModel)]="paymentReference">
-          </div>
         </div>
-      </div>
 
-      <div class="modal-footer bg-light px-4 py-3 border-0 d-flex justify-content-between">
-        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="closePaymentModal()">Annuler</button>
-        <button type="button" class="btn btn-success rounded-pill px-5 py-2 fw-bold" [disabled]="isLoading" (click)="processPayment()">
-          VALIDER LE PAIEMENT
-        </button>
+        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+          <div>
+            <span class="text-muted small d-block">Montant Net Dû</span>
+            <h4 class="fw-bold tabular-nums mb-0" style="color: #1C130E;">{{ getTotalNet() | number }} Ar</h4>
+          </div>
+          <button 
+            type="button" 
+            class="btn rounded-pill px-5 py-3 fw-bold text-white shadow-sm"
+            style="background-color: #B86538; border: none;"
+            [disabled]="isLoading"
+            (click)="validateCheckout()">
+            CONFIRMER LE PAIEMENT
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal-backdrop fade show" *ngIf="isReceiptModalOpen" style="background-color: rgba(62, 39, 35, 0.7); backdrop-filter: blur(4px); z-index: 1040;"></div>
-<div class="modal d-block fade show" *ngIf="isReceiptModalOpen" tabindex="-1" style="z-index: 1050;">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
-    <div class="modal-content border-0 rounded-4 shadow-lg p-4 bg-white text-dark font-monospace">
-      <div class="text-center pb-3 border-bottom">
-        <h4 class="fw-bold mb-1">KALOÈS BOUTIQUE</h4>
-        <span class="small text-muted d-block">SHOWROOM CENTRE-VILLE</span>
-        <span class="small text-muted">Ticket : {{ lastReceipt?.ticket }}</span>
+<div class="modal-backdrop fade show" *ngIf="isReceiptModalOpen" (click)="closeReceiptModal()" style="background-color: rgba(28, 19, 14, 0.6); backdrop-filter: blur(5px); z-index: 1060;"></div>
+<div class="modal d-block fade show" *ngIf="isReceiptModalOpen" tabindex="-1" style="z-index: 1070;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden bg-white">
+      <div class="p-4 text-center border-bottom border-kaloes" style="background-color: #F8F6F2;">
+        <span class="text-uppercase small fw-bold tracking-widest" style="color: #C5A059; letter-spacing: 0.18em; font-size: 0.72rem;">Maison Kaloès • Atelier Madagascar</span>
+        <h4 class="fw-bold mt-1 mb-0" style="font-family: 'Playfair Display', serif; color: #1C130E;">Facture d'Acquisition</h4>
+        <span class="text-muted small font-monospace d-block mt-1">Ticket N° {{ lastReceipt?.ticket }}</span>
       </div>
 
-      <div class="py-3 border-bottom small">
-        <div class="d-flex justify-content-between">
-          <span>Date :</span>
-          <span>{{ lastReceipt?.date | date:'dd/MM/yyyy HH:mm' }}</span>
+      <div class="p-4">
+        <div class="d-flex justify-content-between text-muted small mb-2">
+          <span>Client : <strong class="text-dark">{{ lastReceipt?.client }}</strong></span>
+          <span>Conseiller : <strong class="text-dark">{{ lastReceipt?.vendeur }}</strong></span>
         </div>
-        <div class="d-flex justify-content-between">
-          <span>Vendeur :</span>
-          <span>{{ lastReceipt?.vendeur }}</span>
-        </div>
-        <div class="d-flex justify-content-between">
-          <span>Client :</span>
-          <span>{{ lastReceipt?.client }}</span>
-        </div>
-      </div>
 
-      <div class="py-3 border-bottom small">
-        <div *ngFor="let it of lastReceipt?.items" class="mb-2">
-          <div class="fw-bold">{{ it.nomProduit }} ({{ it.couleur }}/{{ it.taille }})</div>
-          <div class="d-flex justify-content-between text-muted">
-            <span>{{ it.quantite }} x {{ it.prixUnitaire | number }} Ar</span>
-            <span>{{ it.sousTotal | number }} Ar</span>
+        <div class="border-top border-bottom py-3 my-3 border-kaloes">
+          <div *ngFor="let item of lastReceipt?.items" class="d-flex justify-content-between align-items-center py-1 small">
+            <div>
+              <span class="fw-semibold text-dark">{{ item.nomProduit }}</span>
+              <span class="text-muted d-block" style="font-size: 0.75rem;">{{ item.couleur }} / {{ item.taille }} × {{ item.quantite }}</span>
+            </div>
+            <span class="fw-bold tabular-nums" style="color: #1C130E;">{{ item.sousTotal | number }} Ar</span>
           </div>
         </div>
-      </div>
 
-      <div class="pt-3 small">
-        <div class="d-flex justify-content-between">
-          <span>Sous-Total :</span>
-          <span>{{ lastReceipt?.sousTotal | number }} Ar</span>
+        <div class="d-flex justify-content-between small text-muted mb-1">
+          <span>Sous-total</span>
+          <span class="tabular-nums">{{ lastReceipt?.sousTotal | number }} Ar</span>
         </div>
-        <div class="d-flex justify-content-between text-danger" *ngIf="lastReceipt?.remise > 0">
-          <span>Remise :</span>
-          <span>-{{ lastReceipt?.remise | number }} Ar</span>
+        <div class="d-flex justify-content-between small text-danger mb-2" *ngIf="lastReceipt?.remise > 0">
+          <span>Remise accordée</span>
+          <span class="tabular-nums">-{{ lastReceipt?.remise | number }} Ar</span>
         </div>
-        <div class="d-flex justify-content-between fw-bold fs-5 my-2 pt-2 border-top">
-          <span>TOTAL :</span>
-          <span>{{ lastReceipt?.total | number }} Ar</span>
-        </div>
-        <div class="d-flex justify-content-between text-muted">
-          <span>Mode :</span>
-          <span>{{ lastReceipt?.methode }}</span>
-        </div>
-        <div class="d-flex justify-content-between text-muted" *ngIf="lastReceipt?.monnaieRendue > 0">
-          <span>Monnaie Rendue :</span>
-          <span>{{ lastReceipt?.monnaieRendue | number }} Ar</span>
-        </div>
-      </div>
 
-      <div class="text-center pt-4">
-        <button class="btn btn-dark w-100 rounded-pill py-2 fw-semibold font-sans mb-2" style="background-color: #3E2723;" (click)="closeReceiptModal()">
-          NOUVEAU TICKET
+        <div class="p-3 rounded-4 mt-3 d-flex justify-content-between align-items-center" style="background-color: #F7F1E5; border: 1px solid #C5A059;">
+          <span class="fw-bold" style="color: #1C130E; font-family: 'Playfair Display', serif;">Total Règlement</span>
+          <span class="fw-bold fs-4 tabular-nums" style="color: #1C130E;">{{ lastReceipt?.total | number }} Ar</span>
+        </div>
+
+        <div class="mt-4 pt-3 border-top text-center text-muted small" style="font-size: 0.75rem;">
+          Merci de votre confiance. Pièce artisanale garantie par la Maison Kaloès.
+        </div>
+
+        <button type="button" class="btn w-100 rounded-pill py-2.5 fw-bold text-white shadow-sm mt-4 border-0" style="background-color: #1C130E;" (click)="closeReceiptModal()">
+          Clôturer le Ticket
         </button>
       </div>
     </div>

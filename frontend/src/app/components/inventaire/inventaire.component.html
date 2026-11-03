@@ -1,31 +1,32 @@
-<div class="container-fluid">
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+<div class="container-fluid px-0 py-3">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5 border-bottom pb-4 border-kaloes">
     <div>
-      <h3 class="fw-bold mb-1" style="color: var(--primary-dark, #3E2723);">Campagne d'Inventaire Physique</h3>
+      <span class="text-uppercase small fw-bold tracking-widest text-muted" style="letter-spacing: 0.15em;">Audit & Précision</span>
+      <h2 class="fw-bold mb-1 display-6" style="font-family: 'Playfair Display', serif; color: #1C130E;">Campagne d'Inventaire Physique</h2>
       <p class="text-muted small mb-0">Contrôle des écarts entre stock théorique calculé et comptage physique réel</p>
     </div>
 
-    <button class="btn btn-dark rounded-pill px-4 shadow-sm" (click)="validerInventaire()" [disabled]="isLoading || lignesInventaire.length === 0">
+    <button class="btn rounded-pill px-4 py-2.5 fw-semibold shadow-sm text-white border-0" style="background-color: #B86538;" (click)="validerInventaire()" [disabled]="isLoading || lignesInventaire.length === 0">
       <i class="bi bi-check-circle me-2"></i>Clôturer & Mémoriser l'Inventaire
     </button>
   </div>
 
-  <div *ngIf="successMessage" class="alert alert-success border-0 rounded-4 shadow-sm py-3 mb-4">
+  <div *ngIf="successMessage" class="alert border-0 rounded-4 shadow-sm py-3 px-4 mb-4" style="background-color: #F0FDF4; color: #166534; border-left: 4px solid #16A34A !important;">
     <i class="bi bi-shield-check me-2 fs-5"></i>{{ successMessage }}
   </div>
 
-  <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-    <div class="row g-3">
+  <div class="card card-kaloes border-0 shadow-sm rounded-4 p-4 mb-4">
+    <div class="row g-4">
       <div class="col-12 col-md-4">
-        <label class="form-label small fw-semibold text-muted">Point de Vente / Dépôt audité</label>
-        <select class="form-select rounded-3" [(ngModel)]="selectedMagasin">
+        <label class="form-label small fw-bold text-uppercase text-muted" style="letter-spacing: 0.05em; font-size: 0.75rem;">Point de Vente / Dépôt audité</label>
+        <select class="form-select rounded-3 py-2.5" [(ngModel)]="selectedMagasin">
           <option *ngFor="let m of magasins" [value]="m.ID_MAGASIN">{{ m.NOM }}</option>
         </select>
       </div>
 
       <div class="col-12 col-md-4">
-        <label class="form-label small fw-semibold text-muted">Fréquence d'Audit</label>
-        <select class="form-select rounded-3" [(ngModel)]="frequence">
+        <label class="form-label small fw-bold text-uppercase text-muted" style="letter-spacing: 0.05em; font-size: 0.75rem;">Fréquence d'Audit</label>
+        <select class="form-select rounded-3 py-2.5" [(ngModel)]="frequence">
           <option value="JOURNALIER">Journalier</option>
           <option value="HEBDOMADAIRE">Hebdomadaire</option>
           <option value="MENSUEL">Mensuel</option>
@@ -34,43 +35,43 @@
       </div>
 
       <div class="col-12 col-md-4">
-        <label class="form-label small fw-semibold text-muted">Date du Relevé</label>
-        <input type="date" class="form-control rounded-3" [(ngModel)]="dateInventaire">
+        <label class="form-label small fw-bold text-uppercase text-muted" style="letter-spacing: 0.05em; font-size: 0.75rem;">Date du Relevé</label>
+        <input type="date" class="form-control rounded-3 py-2.5" [(ngModel)]="dateInventaire">
       </div>
     </div>
   </div>
 
-  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+  <div class="card card-kaloes border-0 shadow-sm rounded-4 overflow-hidden">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
-          <tr>
-            <th class="ps-4">Article / Référence</th>
-            <th>Emplacement</th>
-            <th class="text-center">Stock Théorique</th>
-            <th class="text-center" style="width: 180px;">Stock Réel Compté</th>
-            <th class="text-center">Écart (Unités)</th>
-            <th class="text-end pe-4">Valorisation Écart</th>
+        <thead style="background-color: #F8F6F2; border-bottom: 2px solid #E6E1DA;">
+          <tr class="text-muted small text-uppercase" style="letter-spacing: 0.08em; font-size: 0.75rem;">
+            <th class="ps-4 py-3">Article / Référence</th>
+            <th class="py-3">Emplacement</th>
+            <th class="text-center py-3">Stock Théorique</th>
+            <th class="text-center py-3" style="width: 180px;">Stock Réel Compté</th>
+            <th class="text-center py-3">Écart (Unités)</th>
+            <th class="text-end pe-4 py-3">Valorisation Écart</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let ligne of lignesInventaire">
-            <td class="ps-4">
-              <div class="fw-bold text-dark">{{ ligne.nom }}</div>
-              <span class="text-muted small">UGS: {{ ligne.ugs }}</span>
+          <tr *ngFor="let ligne of lignesInventaire" class="border-bottom border-kaloes">
+            <td class="ps-4 py-3">
+              <div class="fw-bold" style="color: #1C130E; font-family: 'Playfair Display', serif;">{{ ligne.nom }}</div>
+              <span class="text-muted small font-monospace">UGS : {{ ligne.ugs }}</span>
             </td>
-            <td><span class="badge bg-light text-secondary border">{{ ligne.emplacement }}</span></td>
-            <td class="text-center fw-bold">{{ ligne.theorique }}</td>
+            <td><span class="badge bg-light text-secondary border px-2.5 py-1.5 rounded-3">{{ ligne.emplacement }}</span></td>
+            <td class="text-center fw-bold tabular-nums">{{ ligne.theorique }}</td>
             <td class="text-center">
-              <input type="number" class="form-control text-center fw-bold rounded-3 mx-auto" style="max-width: 120px;" [(ngModel)]="ligne.reel">
+              <input type="number" class="form-control text-center fw-bold tabular-nums rounded-3 mx-auto" style="max-width: 120px;" [(ngModel)]="ligne.reel">
             </td>
             <td class="text-center">
-              <span class="badge rounded-pill px-3 py-2" [ngClass]="getEcart(ligne) === 0 ? 'bg-success' : (getEcart(ligne) < 0 ? 'bg-danger' : 'bg-warning text-dark')">
+              <span class="badge rounded-pill px-3 py-2 fw-bold tabular-nums" [ngClass]="getEcart(ligne) === 0 ? 'bg-success-subtle text-success border border-success-subtle' : (getEcart(ligne) < 0 ? 'bg-danger-subtle text-danger border border-danger-subtle' : 'bg-warning-subtle text-warning-emphasis border border-warning-subtle')">
                 {{ getEcart(ligne) > 0 ? '+' : '' }}{{ getEcart(ligne) }}
               </span>
             </td>
-            <td class="text-end pe-4 fw-semibold" [ngClass]="getEcartValeur(ligne) < 0 ? 'text-danger' : (getEcartValeur(ligne) > 0 ? 'text-warning text-dark' : 'text-success')">
-              {{ getEcartValeur(ligne) | number }} MGA
+            <td class="text-end pe-4 fw-bold tabular-nums" [ngClass]="getEcartValeur(ligne) < 0 ? 'text-danger' : (getEcartValeur(ligne) > 0 ? 'text-warning' : 'text-success')">
+              {{ getEcartValeur(ligne) | number }} Ar
             </td>
           </tr>
         </tbody>

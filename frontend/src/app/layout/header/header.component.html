@@ -1,0 +1,123 @@
+<header 
+  class="d-flex align-items-center justify-content-between px-3 px-md-4 position-sticky top-0 w-100"
+  style="height: 72px; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #E6E1DA; z-index: 1030;">
+
+  <div class="d-flex align-items-center gap-3">
+    <button 
+      type="button" 
+      class="btn p-2 d-flex align-items-center justify-content-center rounded-3 border-0 shadow-none text-dark"
+      style="background-color: #F8F6F2; width: 40px; height: 40px; transition: all 0.2s;"
+      aria-label="Basculer le menu"
+      (click)="toggleSidebar()">
+      <i class="bi bi-text-indent-left fs-5" style="color: #1C130E;"></i>
+    </button>
+
+    <div class="position-relative d-none d-md-block" style="width: 320px;">
+      <form (ngSubmit)="onSearchSubmit()">
+        <div class="input-group rounded-pill overflow-hidden" style="background-color: #F8F6F2; border: 1px solid #E6E1DA;">
+          <span class="input-group-text bg-transparent border-0 ps-3 text-muted">
+            <i class="bi bi-search" style="font-size: 0.85rem; color: #94A3B8;"></i>
+          </span>
+          <input 
+            type="text" 
+            class="form-control bg-transparent border-0 py-2 small shadow-none" 
+            placeholder="Rechercher modèle, UGS, client..." 
+            [(ngModel)]="searchQuery" 
+            name="searchQuery">
+          <span class="input-group-text bg-transparent border-0 pe-3 text-muted">
+            <kbd class="badge bg-white text-muted border px-1.5 py-1" style="font-size: 0.65rem; border-color: #E6E1DA !important;">⌘K</kbd>
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center gap-2 gap-md-3">
+    
+    <div class="position-relative">
+      <button 
+        type="button" 
+        class="btn d-flex align-items-center gap-2 rounded-pill px-3 py-1.5 shadow-none border"
+        style="background-color: #FFFFFF; border-color: #E6E1DA; font-size: 0.82rem;"
+        (click)="toggleStoreDropdown()">
+        <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #10B981;"></span>
+        <span class="fw-semibold text-truncate d-none d-sm-inline" style="color: #1C130E; max-width: 160px;">{{ layoutService.selectedStore() }}</span>
+        <i class="bi bi-chevron-down text-muted" style="font-size: 0.75rem;"></i>
+      </button>
+
+      <div *ngIf="isStoreDropdownOpen" 
+           class="position-absolute end-0 mt-2 py-2 rounded-4 shadow-lg bg-white border border-kaloes" 
+           style="width: 240px; z-index: 1050;">
+        <div class="px-3 py-1.5 text-uppercase fw-bold text-muted" style="font-size: 0.65rem; letter-spacing: 0.1em;">Changer d'Atelier</div>
+        <button 
+          *ngFor="let s of layoutService.stores" 
+          type="button" 
+          class="dropdown-item px-3 py-2 d-flex align-items-center justify-content-between text-truncate"
+          [style.background-color]="layoutService.selectedStore() === s.nom ? '#F8F6F2' : 'transparent'"
+          (click)="selectStore(s.nom)">
+          <div class="d-flex align-items-center gap-2 text-truncate">
+            <i class="bi bi-shop text-muted" style="color: #C5A059 !important;"></i>
+            <span class="small fw-medium" [ngClass]="layoutService.selectedStore() === s.nom ? 'text-dark fw-bold' : 'text-secondary'">{{ s.nom }}</span>
+          </div>
+          <i *ngIf="layoutService.selectedStore() === s.nom" class="bi bi-check2 text-success fw-bold"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="position-relative">
+      <button 
+        type="button" 
+        class="btn p-2 d-flex align-items-center justify-content-center rounded-3 border-0 shadow-none position-relative"
+        style="background-color: #F8F6F2; width: 40px; height: 40px;"
+        aria-label="Alertes de stock"
+        (click)="toggleNotifications()">
+        <i class="bi bi-bell fs-5" style="color: #1C130E;"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white" style="font-size: 0.65rem;">
+          3
+        </span>
+      </button>
+
+      <div *ngIf="isNotificationsOpen" 
+           class="position-absolute end-0 mt-2 py-2 rounded-4 shadow-lg bg-white border border-kaloes" 
+           style="width: 320px; z-index: 1050;">
+        <div class="px-3 py-2 border-bottom d-flex align-items-center justify-content-between">
+          <span class="fw-bold small" style="color: #1C130E; font-family: 'Playfair Display', serif;">Alertes de Stock Atelier</span>
+          <span class="badge rounded-pill bg-danger-subtle text-danger small">3 ruptures</span>
+        </div>
+        <div class="list-group list-group-flush">
+          <div *ngFor="let alert of stockAlerts" class="p-3 border-bottom d-flex align-items-start gap-2">
+            <div class="p-2 rounded-circle bg-danger-subtle text-danger flex-shrink-0">
+              <i class="bi bi-exclamation-triangle" style="font-size: 0.85rem;"></i>
+            </div>
+            <div class="flex-grow-1 overflow-hidden">
+              <span class="fw-bold d-block small text-truncate" style="color: #1C130E;">{{ alert.model }}</span>
+              <span class="text-muted d-block" style="font-size: 0.72rem;">UGS: {{ alert.ugs }} • Stock : <strong>{{ alert.stock }} pièce(s)</strong></span>
+            </div>
+          </div>
+        </div>
+        <div class="p-2 text-center">
+          <a routerLink="/articles" class="small fw-semibold text-decoration-none" style="color: #B86538;" (click)="isNotificationsOpen = false">Voir le catalogue complet</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="vr bg-secondary opacity-25 d-none d-sm-block" style="height: 28px;"></div>
+
+    <a routerLink="/profil" class="d-flex align-items-center gap-2 text-decoration-none cursor-pointer" title="Mon Espace Personnel">
+      <div 
+        class="rounded-circle overflow-hidden d-flex align-items-center justify-content-center text-white fw-bold shadow-sm flex-shrink-0"
+        style="width: 40px; height: 40px; background-color: #1C130E; border: 2px solid #C5A059; font-family: 'Playfair Display', serif; font-size: 1rem;">
+        <img *ngIf="currentUser?.avatar" [src]="currentUser.avatar" alt="Avatar" class="w-100 h-100 object-fit-cover">
+        <span *ngIf="!currentUser?.avatar">{{ (currentUser?.nom || 'K').charAt(0).toUpperCase() }}</span>
+      </div>
+
+      <div class="d-none d-md-flex flex-column text-start">
+        <span class="fw-bold text-dark small text-truncate" style="max-width: 140px; line-height: 1.2;">{{ currentUser?.nom || 'Conseiller Kaloès' }}</span>
+        <span class="badge px-2 py-0.5 rounded-pill mt-0.5 text-uppercase" style="background-color: #F7F1E5; color: #C5A059; font-size: 0.62rem; width: fit-content; border: 1px solid rgba(197, 160, 89, 0.3);">
+          {{ currentUser?.role || 'CAISSIER' }}
+        </span>
+      </div>
+    </a>
+
+  </div>
+</header>

@@ -47,7 +47,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response): Promise<
 
 router.put('/:id', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = String(req.params['id'] || '');
     const { nom, telephone, email, adresse, ville, remarque } = req.body;
 
     const customer = await prisma.customer.update({
@@ -70,7 +70,7 @@ router.put('/:id', authenticate, async (req: AuthRequest, res: Response): Promis
 
 router.delete('/:id', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = String(req.params['id'] || '');
     await prisma.customer.delete({ where: { id } });
     res.status(200).json({ success: true });
   } catch (error) {
@@ -97,12 +97,15 @@ router.post('/import', authenticate, async (req: AuthRequest, res: Response): Pr
         remarque: c.remarque ? c.remarque.trim() : null
       }));
 
-    const result = await prisma.customer.createMany({
-      data: cleanData,
-      skipDuplicates: true
-    });
+    let count = 0;
+    for (const data of cleanData) {
+      await prisma.customer.create({ data }).catch((err) => {
+        console.error('Import error:', err);
+      });
+      count++;
+    }
 
-    res.status(201).json({ count: result.count });
+    res.status(201).json({ count });
   } catch (error) {
     res.status(500).json({ error: String(error) });
   }

@@ -1,0 +1,196 @@
+<aside 
+  class="d-flex flex-column h-100 position-relative transition-all"
+  [style.width]="isCollapsed ? '84px' : '280px'"
+  style="background-color: #18110D; border-right: 1px solid #E6E1DA; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1040;">
+
+  <div class="p-3 d-flex align-items-center justify-content-between border-bottom" style="border-color: rgba(230, 225, 218, 0.15) !important; height: 72px;">
+    <a routerLink="/dashboard" class="d-flex align-items-center gap-2 text-decoration-none overflow-hidden">
+      <span class="fs-4 fw-bold" style="color: #C5A059;">◆</span>
+      <div *ngIf="!isCollapsed" class="d-flex flex-column text-nowrap">
+        <span class="fw-bold tracking-widest text-white fs-5" style="font-family: 'Playfair Display', serif; letter-spacing: 0.1em;">KALOÈS</span>
+        <span class="text-uppercase text-muted" style="font-size: 0.62rem; letter-spacing: 0.18em; color: #94A3B8 !important;">HAUTE MAROQUINERIE</span>
+      </div>
+    </a>
+    <button 
+      type="button" 
+      class="btn btn-sm text-muted d-lg-none p-1 border-0 shadow-none" 
+      aria-label="Fermer" 
+      (click)="layoutService.closeMobileDrawer()">
+      <i class="bi bi-x-lg fs-5 text-white"></i>
+    </button>
+  </div>
+
+  <div class="flex-grow-1 overflow-y-auto px-2 py-3" style="scrollbar-width: thin; scrollbar-color: rgba(197, 160, 89, 0.2) transparent;">
+    
+    <div class="mb-4">
+      <div *ngIf="!isCollapsed" class="px-3 mb-2 text-uppercase fw-bold text-nowrap" style="color: #C5A059; font-size: 0.68rem; letter-spacing: 0.14em;">
+        Commerce & Ventes
+      </div>
+      <div *ngIf="isCollapsed" class="text-center mb-2" style="color: #C5A059; font-size: 0.6rem;">●</div>
+
+      <nav class="d-flex flex-column gap-1">
+        <a 
+          routerLink="/dashboard" 
+          routerLinkActive="active-sidebar-link" 
+          (click)="layoutService.closeMobileDrawer()"
+          class="sidebar-item d-flex align-items-center rounded-3 px-3 py-2.5 text-decoration-none text-nowrap position-relative"
+          [title]="isCollapsed ? 'Tableau de Bord' : ''">
+          <i class="bi bi-grid-1x2 fs-5 me-3 icon-wrap"></i>
+          <span *ngIf="!isCollapsed" class="fw-medium font-sans">Tableau de Bord</span>
+        </a>
+
+        <a 
+          routerLink="/caisse" 
+          routerLinkActive="active-sidebar-link" 
+          (click)="layoutService.closeMobileDrawer()"
+          class="sidebar-item d-flex align-items-center justify-content-between rounded-3 px-3 py-2.5 text-decoration-none text-nowrap position-relative"
+          [title]="isCollapsed ? 'Caisse Tactile POS' : ''">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-calculator fs-5 me-3 icon-wrap"></i>
+            <span *ngIf="!isCollapsed" class="fw-medium font-sans">Caisse Tactile POS</span>
+          </div>
+          <span *ngIf="!isCollapsed" class="badge rounded-pill px-2 py-0.5" style="background-color: #B86538; color: #FFFFFF; font-size: 0.65rem;">LIVE</span>
+        </a>
+
+        <a 
+          routerLink="/loyverse" 
+          routerLinkActive="active-sidebar-link" 
+          (click)="layoutService.closeMobileDrawer()"
+          class="sidebar-item d-flex align-items-center rounded-3 px-3 py-2.5 text-decoration-none text-nowrap position-relative"
+          [title]="isCollapsed ? 'Historique des Ventes' : ''">
+          <i class="bi bi-receipt-cutoff fs-5 me-3 icon-wrap"></i>
+          <span *ngIf="!isCollapsed" class="fw-medium font-sans">Historique des Ventes</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="mb-4">
+      <div *ngIf="!isCollapsed" class="px-3 mb-2 text-uppercase fw-bold text-nowrap" style="color: #C5A059; font-size: 0.68rem; letter-spacing: 0.14em;">
+        Logistique & WMS
+      </div>
+      <div *ngIf="isCollapsed" class="text-center mb-2" style="color: #C5A059; font-size: 0.6rem;">●</div>
+
+      <nav class="d-flex flex-column gap-1">
+        <a 
+          routerLink="/articles" 
+          routerLinkActive="active-sidebar-link" 
+          (click)="layoutService.closeMobileDrawer()"
+          class="sidebar-item d-flex align-items-center justify-content-between rounded-3 px-3 py-2.5 text-decoration-none text-nowrap position-relative"
+          [title]="isCollapsed ? 'Catalogue Produits' : ''">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-handbag fs-5 me-3 icon-wrap"></i>
+            <span *ngIf="!isCollapsed" class="fw-medium font-sans">Catalogue Produits</span>
+          </div>
+          <span *ngIf="!isCollapsed" class="badge rounded-pill px-2 py-0.5" style="background-color: #F7F1E5; color: #C5A059; border: 1px solid #C5A059; font-size: 0.65rem;">3 alertes</span>
+        </a>
+
+        <a 
+          routerLink="/transfert" 
+          routerLinkActive="active-sidebar-link" 
+          (click)="layoutService.closeMobileDrawer()"
+          class="sidebar-item d-flex align-items-center rounded-3 px-3 py-2.5 text-decoration-none text-nowrap position-relative"
+          [title]="isCollapsed ? 'Mouvements & Transferts' : ''">
+          <i class="bi bi-arrow-left-right fs-5 me-3 icon-wrap"></i>
+          <span *ngIf="!isCollapsed" class="fw-medium font-sans">Mouvements & Transferts</span>
+        </a>
+
+        <a 
+          routerLink="/inventaire" 
+          routerLinkActive="active-sidebar-link" 
+          (click)="layoutService.closeMobileDrawer()"
+          class="sidebar-item d-flex align-items-center rounded-3 px-3 py-2.5 text-decoration-none text-nowrap position-relative"
+          [title]="isCollapsed ? 'Inventaires Physiques' : ''">
+          <i class="bi bi-clipboard-check fs-5 me-3 icon-wrap"></i>
+          <span *ngIf="!isCollapsed" class="fw-medium font-sans">Inventaires Physiques</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="mb-3">
+      <div *ngIf="!isCollapsed" class="px-3 mb-2 text-uppercase fw-bold text-nowrap" style="color: #C5A059; font-size: 0.68rem; letter-spacing: 0.14em;">
+        Gestion & Paramètres
+      </div>
+      <div *ngIf="isCollapsed" class="text-center mb-2" style="color: #C5A059; font-size: 0.6rem;">●</div>
+
+      <nav class="d-flex flex-column gap-1">
+        <a 
+          routerLink="/clients" 
+          routerLinkActive="active-sidebar-link" 
+          (click)="layoutService.closeMobileDrawer()"
+          class="sidebar-item d-flex align-items-center rounded-3 px-3 py-2.5 text-decoration-none text-nowrap position-relative"
+          [title]="isCollapsed ? 'Répertoire Clients (CRM)' : ''">
+          <i class="bi bi-people fs-5 me-3 icon-wrap"></i>
+          <span *ngIf="!isCollapsed" class="fw-medium font-sans">Répertoire Clients (CRM)</span>
+        </a>
+
+        <a 
+          routerLink="/utilisateurs" 
+          routerLinkActive="active-sidebar-link" 
+          (click)="layoutService.closeMobileDrawer()"
+          class="sidebar-item d-flex align-items-center rounded-3 px-3 py-2.5 text-decoration-none text-nowrap position-relative"
+          [title]="isCollapsed ? 'Utilisateurs & Rôles' : ''">
+          <i class="bi bi-person-gear fs-5 me-3 icon-wrap"></i>
+          <span *ngIf="!isCollapsed" class="fw-medium font-sans">Utilisateurs & Rôles</span>
+        </a>
+      </nav>
+    </div>
+
+  </div>
+
+  <div class="p-3 border-top" style="border-color: rgba(230, 225, 218, 0.15) !important; background-color: rgba(0, 0, 0, 0.2);">
+    <div *ngIf="!isCollapsed" class="d-flex align-items-center justify-content-between p-2.5 rounded-3 mb-2" style="background-color: rgba(255, 255, 255, 0.04); border: 1px solid rgba(197, 160, 89, 0.2);">
+      <div class="d-flex align-items-center gap-2 overflow-hidden">
+        <span class="rounded-circle d-inline-block flex-shrink-0" style="width: 8px; height: 8px; background-color: #10B981;"></span>
+        <div class="d-flex flex-column text-truncate">
+          <span class="text-white small fw-semibold text-truncate">{{ layoutService.selectedStore() }}</span>
+          <span class="text-muted" style="font-size: 0.65rem;">Point de vente actif</span>
+        </div>
+      </div>
+      <i class="bi bi-shop text-muted ms-1" style="color: #C5A059 !important;"></i>
+    </div>
+
+    <div *ngIf="isCollapsed" class="text-center mb-2" [title]="layoutService.selectedStore()">
+      <div class="p-2 rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(197, 160, 89, 0.2);">
+        <i class="bi bi-shop" style="color: #C5A059;"></i>
+      </div>
+    </div>
+
+    <button 
+      type="button" 
+      class="btn w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-pill text-white shadow-none border-0" 
+      style="background-color: rgba(184, 101, 56, 0.25); color: #E6E1DA; font-size: 0.82rem; transition: all 0.2s;"
+      [title]="isCollapsed ? 'Déconnexion' : ''"
+      (click)="logout()">
+      <i class="bi bi-box-arrow-right fs-6" style="color: #B86538;"></i>
+      <span *ngIf="!isCollapsed" class="fw-semibold">Déconnexion</span>
+    </button>
+  </div>
+</aside>
+
+<style>
+  .sidebar-item {
+    color: #94A3B8;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 3px solid transparent;
+  }
+  .sidebar-item .icon-wrap {
+    color: #94A3B8;
+    transition: color 0.2s ease;
+  }
+  .sidebar-item:hover {
+    color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid #C5A059;
+  }
+  .sidebar-item:hover .icon-wrap {
+    color: #C5A059;
+  }
+  .active-sidebar-link {
+    color: #FFFFFF !important;
+    background-color: rgba(197, 160, 89, 0.12) !important;
+    border-left: 3px solid #C5A059 !important;
+  }
+  .active-sidebar-link .icon-wrap {
+    color: #C5A059 !important;
+  }
+</style>
